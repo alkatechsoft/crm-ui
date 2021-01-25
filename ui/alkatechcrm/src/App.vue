@@ -1,29 +1,25 @@
 <template>
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/ethancoder.png"> -->
-     <Sidebar />
-    <login />
-    <Header data="Alkatech crm" msg="hi from Alkatech"/>
-    <Drawer />
-   
+    <Header />
+    <Sidebar2 />
+    <!-- <login /> -->
+    <!-- <Header data="Alkatech crm" msg="hi from Alkatech"/> -->
 
-  </div> 
+  </div>
 </template> 
 <script>
 
-import Login from './components/Login.vue';
-import Sidebar from './components/Sidebar.vue';
+// import Login from './components/Login.vue';
+import Sidebar2 from './components/Sidebar2.vue'; 
 import Header from './components/Header.vue';
-import Drawer from './components/Drawer.vue';
 
 
 export default {
   name: 'App',
   components: {
-    Login,
     Header,
-    Sidebar,
-    Drawer
+    Sidebar2
   }
 } 
 </script> 
@@ -35,6 +31,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
