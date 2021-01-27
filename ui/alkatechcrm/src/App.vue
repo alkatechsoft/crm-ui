@@ -1,28 +1,30 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/ethancoder.png"> -->
     <Header />
-    <Sidebar2 />
-    <!-- <login /> -->
-    <!-- <Header data="Alkatech crm" msg="hi from Alkatech"/> -->
+    <Sidebar />
+    <!-- <Login /> -->
+    <Form />
+<router-view></router-view>
 
   </div>
-</template> 
+</template>
+
 <script>
-
-// import Login from './components/Login.vue';
-import Sidebar2 from './components/Sidebar2.vue'; 
-import Header from './components/Header.vue';
-
+// import Login from './components/admin/Login.vue'
+import Sidebar from './components/admin/dashboard/Sidebar.vue'
+import Header from './components/admin/dashboard/Header.vue'
+import Form from './components/admin/Form.vue'
 
 export default {
   name: 'App',
   components: {
+    // Login,
+    Sidebar,
     Header,
-    Sidebar2
+    Form
   }
-} 
-</script> 
+}
+</script>
 
 <style>
 #app {
@@ -31,5 +33,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  margin-top: 0px;
 }
 </style>

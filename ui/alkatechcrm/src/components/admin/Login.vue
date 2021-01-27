@@ -2,13 +2,12 @@
 <div>
  <b-container fluid>
     <b-row>
-    <!-- <b-col>
-    </b-col> -->
+ 
 
     <b-col offset-lg="4" offset-md="3" offset-sm="3" lg="4" md="6" sm="6" offset="1" cols="10">
 
     <b-card class="bg-light">
-    <img alt="ethancoder logo" src="../assets/alkatech.png">
+    <img alt="ethancoder logo" src="./../../assets/alkatech.png">
 
         <b-form @submit="onSubmit" @reset="onReset" v-if="show" class="mt-2">
           <b-form-group id="input-group-1" label-for="input-1">
@@ -31,8 +30,7 @@
       <pre class="m-0">{{ form }}</pre>
     </b-card> -->
     </b-col>
-        <!-- <b-col>
-      </b-col> -->
+    
       </b-row>
    </b-container>
    </div>
@@ -45,11 +43,8 @@
       return {
         form: {
           email: '',
-          password: '',
-          food: null,
-          checked: []
+          password: ''
         },
-        foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
         show: true
       }
     },
@@ -75,7 +70,8 @@
   }
 </script>
 
-<style>
+<style scoped>
+
 .card{
       border: 0px solid rgba(0,0,0,.125);
 }
