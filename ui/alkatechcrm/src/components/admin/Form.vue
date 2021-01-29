@@ -38,13 +38,17 @@
         passwordValid:''
       }
     },
+    methods:{
+emaiSearch(){
+    
+}
+    },
     computed: {
       emailValidation() {
         return this.email.length > 4 && this.email.length < 13
       },
         passwordValidation() {
         return console.log(this.password.split('@'))
-
       }
     }
   }

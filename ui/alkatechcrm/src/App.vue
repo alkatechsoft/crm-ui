@@ -2,26 +2,26 @@
   <div id="app">
     <Header />
     <Sidebar />
-    <!-- <Login /> -->
-    <Form />
+    <Login />
+    <Test1 />
 <router-view></router-view>
 
   </div>
 </template>
 
 <script>
-// import Login from './components/admin/Login.vue'
+import Login from './components/admin/Login.vue'
+import Test1 from './components/admin/Test.vue'
 import Sidebar from './components/admin/dashboard/Sidebar.vue'
 import Header from './components/admin/dashboard/Header.vue'
-import Form from './components/admin/Form.vue'
 
 export default {
   name: 'App',
   components: {
-    // Login,
+    Login,
     Sidebar,
     Header,
-    Form
+    Test1
   }
 }
 </script>

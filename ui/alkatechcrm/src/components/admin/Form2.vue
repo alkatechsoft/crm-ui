@@ -2,45 +2,32 @@
 <div>
  <b-container fluid>
     <b-row>
- 
-
     <b-col offset-lg="4" offset-md="3" offset-sm="3" lg="4" md="6" sm="6" offset="1" cols="10">
-
     <b-card class="bg-light">
     <img alt="ethancoder logo" src="./../../assets/alkatech.png">
-    <ValidationObserver v-slot="{ handleSubmit }">
-        <b-form  @submit.prevent="handleSubmit(onSubmit)" class="mt-2">
-            <ValidationProvider name="email" rules="required|email" v-slot="{ errors }">
-         <b-form-group id="input-group-1" label-for="input-1">
+
+        <b-form @submit="onSubmit"  class="mt-2">
+          <b-form-group id="input-group-1" label-for="email-check">
               <div class="input-container">
               <i class="fa fa-envelope icon" style=""></i>
-              <b-form-input  class="input-field" id="input-1" v-model="form.email" type="email" placeholder="Enter email" ></b-form-input>            
+              <b-form-input  class="input-field" id="email-check" @keyup="emailvalidation" v-model="form.email" type="email" placeholder="Enter Form1 email" required></b-form-input>
+                <b-form-invalid-feedback >
+                Your user ID must be 5-12 characters long.
+                </b-form-invalid-feedback>
+                <!-- <b-form-valid-feedback>
+                Looks Good.
+                </b-form-valid-feedback> -->
               </div>
-             <span class="text-float">{{ errors[0] }}</span>
           </b-form-group>
-      </ValidationProvider>
-            <ValidationProvider name="password" rules="required" v-slot="{ errors }">
 
           <b-form-group id="input-group-2"   label-for="input-2">
               <div class="input-container">
                 <i class="fas fa-lock icon"></i>
-                <b-form-input class="input-field" id="input-2" v-model="form.password" type="password" placeholder="Enter password" ></b-form-input>
+                <b-form-input class="input-field" id="input-2" v-model="form.password" type="password" placeholder="Enter Form1 password" required></b-form-input>
               </div>
-            <span class="text-float">{{ errors[0] }}</span>
-
           </b-form-group>
-            </ValidationProvider>
-          <b-form-group id="forgot-password"   label-for="forgot-password">
-              <div class="input-container">
-               <b-nav vertical>
-                    <b-nav-item to="link1">Forget Password </b-nav-item>
-                </b-nav>
-              </div>
           <b-button class="ripple" type="submit" variant="primary">Submit</b-button>
-
-          </b-form-group>
         </b-form>
-    </ValidationObserver>
     </b-card>
     <!-- <b-card class="mt-3" header="Form Data Result">
       <pre class="m-0">{{ form }}</pre>
@@ -53,63 +40,41 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
-import axios from 'axios'
-
-axios.defaults.withCredentials = true;
-
   export default {
       name:'Login',
     data() {
       return {
         form: {
-          email: '',
-          password: ''
-        }
+        email: '',
+        password: '',
+        emailValid:false,
+        passwordValid:false
+        } 
       }
     },
     methods: {
-      // onSubmit() {
-      //   alert(JSON.stringify(this.form))
-      //   this.axios.post('http://192.168.1.14/lcrm-api/list-staff', this.form).then((response)=>{
-      //   console.log(response);
-      //   })
-      // },
+        emailvalidation(){
+        console.log(this.emailValid)
+            
+            if(this.form.email.length>4){
+            this.emailValid=true;
+            console.log(this.emailValid)
 
-      //   this.axios.post('https://8c1cf14a2bed.ngrok.io/lcrm-api/login', this.form, {
-      //   headers: {
-      //       // remove headers
-      //       Accept: 'application/json'
-      //     }
-      // }).then(res => {
-      //   console.log(res);
-      // })},
-//  async onSubmit() {
-//       const User = new FormData();
-//       User.append("email", this.form.email);
-//       User.append("password", this.form.password);
-//       axios
-//         .post("http://192.168.1.14/lcrm-api/list-staff", {
-//           crossDomain: true,
-//           email: this.form.email,
-//           password: this.form.password,
-//         })
-//         .then(function (response) {
-//           console.log(response);
-//         })
-//         .catch(function (error) {
-//           console.log(error);
-//         });
-//     },
-
- onSubmit() {
-       Vue.axios.get("http://localhost:8081/lcrm-api/list-staff").then((response) => {
-        console.log(response.data)
-      })
+            }else{
+            this.emailValid=false;
+            }
+            if(this.emailValid){
+                document.getElementById("email-check").classList.add("is-valid");
+            }else{
+                document.getElementById("email-check").classList.remove("is-valid");
+            } 
+            // console.log(this.emailValid);
+        },
+      onSubmit(event) {
+        event.preventDefault();
+       var obj = { email: this.form.email, password: this.form.password};
+        alert(JSON.stringify(obj))
       },
-    
-
       onReset(event) {
         event.preventDefault()
         // Reset our form values
@@ -118,10 +83,10 @@ axios.defaults.withCredentials = true;
         this.form.food = null
         this.form.checked = []
         // Trick to reset/clear native browser form validation state
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
+        // this.show = false
+        // this.$nextTick(() => {
+        //   this.show = true
+        // })
       }
     }
   }
@@ -218,18 +183,15 @@ axios.defaults.withCredentials = true;
     text-align: center;
      } 
   .input-container {
-    text-align: left;
   display: flex;
   width: 100%;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
 }
 .input-field {
   width: 100%;
   padding: 10px;
   outline: none;
   border-radius: 0rem 0.25rem 0.25rem 0rem;
-}
-.text-float{
 }
 </style>
 
