@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import Vue from 'vue'
+// import Vue from 'vue'
 
 import axios from 'axios'
 
@@ -70,12 +70,14 @@ axios.defaults.withCredentials = true;
       }
     },
     methods: {
-      // onSubmit() {
-      //   alert(JSON.stringify(this.form))
-      //   this.axios.post('http://192.168.1.14/lcrm-api/list-staff', this.form).then((response)=>{
-      //   console.log(response);
-      //   })
-      // },
+      onSubmit() {
+        // alert(JSON.stringify(this.form))
+        this.axios.post('http://localhost:8080/lcrm-api/login', this.form).then((response)=>{
+          localStorage.setItem('token', response.data.response_body.access_token);
+          console.log(response);
+
+        })
+      },
 
       //   this.axios.post('https://8c1cf14a2bed.ngrok.io/lcrm-api/login', this.form, {
       //   headers: {
@@ -103,11 +105,11 @@ axios.defaults.withCredentials = true;
 //         });
 //     },
 
- onSubmit() {
-       Vue.axios.get("http://localhost:8081/lcrm-api/list-staff").then((response) => {
-        console.log(response.data)
-      })
-      },
+//  onSubmit() {
+//        Vue.axios.post("http://localhost:8080/lcrm-api/login").then((response) => {
+//         console.log(response.data)
+//       })
+//       },
     
 
       onReset(event) {

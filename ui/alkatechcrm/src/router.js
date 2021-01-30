@@ -1,9 +1,21 @@
-import '@babel/polyfill'
-import 'mutationobserver-shim'
+ 
 import Vue from 'vue'
 import './plugins/bootstrap-vue'
 import App from './App.vue'
- 
+import VueRouter from 'vue-router'
+
+import Link1 from './components/admin/dashboard/views/Link1'
+import Link2 from './components/admin/dashboard/views/Link2'
+import Link3 from './components/admin/dashboard/views/Link3'
+export default router({
+routes: [
+    {path:'/login', component:Login},
+    {path:'/link1', component:Link1},
+    {path:'/link2', component:Link2},
+    {path:'/link3', component:Link3}
+]
+})
+
 //axios for api for start
 import axios from 'axios'
 import VueAxios from 'vue-axios'
@@ -29,21 +41,8 @@ Vue.component('ValidationProvider', ValidationProvider);
 
 
 
-import VueRouter from 'vue-router'
-import Link1 from './components/admin/dashboard/views/Link1'
-import Clientlist from './components/admin/dashboard/views/Clientlist'
-import Link3 from './components/admin/dashboard/views/Link3'
 Vue.use(VueRouter)
-const routes=[
-  {path:'/admin', component:Link1},
-  {path:'/link1', component:Link1},
-  {path:'/clients', component:Clientlist},
-  {path:'/link3', component:Link3}
-]
-const router = new VueRouter({
-  routes,
-  mode: 'history'
-})
+ 
 Vue.config.productionTip = false  
 
 new Vue({

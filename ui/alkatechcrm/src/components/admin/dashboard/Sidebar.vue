@@ -16,7 +16,7 @@
                  
                     
                     <b-nav-item to="link1" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Link1 </b-nav-item>
-                    <b-nav-item to="link2" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Link2 </b-nav-item>
+                    <b-nav-item to="clients" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Clients </b-nav-item>
                     <b-nav-item to="link3" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Link3 </b-nav-item>
 
                   </b-nav>

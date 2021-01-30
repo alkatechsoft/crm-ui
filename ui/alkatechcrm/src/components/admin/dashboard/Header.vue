@@ -23,8 +23,8 @@
             <template #button-content>
                 <em><i class="fa fa-user" /></em>
             </template>
-            <b-dropdown-item href="#">Profile</b-dropdown-item>
-            <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+             <b-dropdown-item href="#">Profile</b-dropdown-item>
+             <b-dropdown-item href="#">Sign Out</b-dropdown-item>
             </b-nav-item-dropdown>
         </b-navbar-nav>
         </b-collapse>
@@ -35,7 +35,7 @@
 export default {
 name:'Sidebar'
 }
-
+ 
 // function openNav() {
 //   document.getElementById("mySidenav").style.width = "250px";
 //   document.getElementById("main").style.marginLeft = "250px";

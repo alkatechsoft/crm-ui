@@ -3,7 +3,6 @@
     <Header />
     <Sidebar />
     <Login />
-    <Test1 />
 <router-view></router-view>
 
   </div>
@@ -11,7 +10,6 @@
 
 <script>
 import Login from './components/admin/Login.vue'
-import Test1 from './components/admin/Test.vue'
 import Sidebar from './components/admin/dashboard/Sidebar.vue'
 import Header from './components/admin/dashboard/Header.vue'
 
@@ -20,8 +18,7 @@ export default {
   components: {
     Login,
     Sidebar,
-    Header,
-    Test1
+    Header
   }
 }
 </script>
