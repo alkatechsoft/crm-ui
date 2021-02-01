@@ -4,12 +4,12 @@
     <b-row>
       
 
-      <b-col sm="5" md="6" lg="2" class="my-1">
+      <b-col  offset-lg="" lg="2" offset-md="0" md="5" sm="4"  class="my-1">
         <b-form-group
           label="Filter"
           label-for="per-page-select"
-          label-cols-sm="6"
-          label-cols-md="4"
+          label-cols-sm="2"
+          label-cols-md="2"
           label-cols-lg="3"
           label-align-sm="right"
           label-size="sm"
@@ -23,9 +23,9 @@
           ></b-form-select>
         </b-form-group>
       </b-col>
-    <b-col lg="4" md="6" class="my-1">
+    <b-col offset-lg="6" lg="4" offset-md="2" md="5" offset-sm="1"  sm="7" class="my-1">
         <b-form-group
-          label="Filter"
+          label=""
           label-for="filter-input"
           label-cols-sm="3"
           label-align-sm="right"
@@ -111,58 +111,18 @@
   </b-container>
 </template>
 
-<script>
+ 
+ <script>
 import axios from 'axios';
-axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-
   export default {
     data() {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
       return {
-        items: [
-          // {
-          //   isActive: true, age: 40, name: { first: 'Dickerson', last: 'Macdonald' } , email: 'abc1@gmail.com',
-          // },
-          // { 
-          // isActive: false, age: 21, name: { first: 'Larsen', last: 'Shaw' } , email: 'abc2@gmail.com',
-          // },
-          // {
-          //   isActive: false, age: 9, name: { first: 'Mini', last: 'Navarro' }, email: 'abc3@gmail.com',
-          // },
-          // { 
-          //   isActive: false, age: 89, name: { first: 'Geneva', last: 'Wilson' } , email: 'abc4@gmail.com',
-          // },
-          // { 
-          //   isActive: true, age: 38, name: { first: 'Jami', last: 'Carney' } , email: 'abc5@gmail.com',
-          // },
-          // { 
-          //   isActive: false, age: 27, name: { first: 'Essie', last: 'Dunlap' } , email: 'abc6@gmail.com',
-          // },
-          // { 
-          //   isActive: true, age: 40, name: { first: 'Thor', last: 'Macdonald' }, email: 'abc7@gmail.com',
-          // },
-          // { isActive: true, age: 87, name: { first: 'Larsen', last: 'Shaw' }, email: 'abc8@gmail.com',
-          // },
-          // {
-          //  isActive: false, age: 26, name: { first: 'Mitzi', last: 'Navarro' } , email: 'abc9@gmail.com',
-          // }, 
-          // { 
-          //   isActive: false, age: 29, name: { first: 'Dick', last: 'Dunlap' } , email: 'abc10@gmail.com',
-          // }
-        ],
+        items: [],
         fields: [
-          { key: 'first_name', label: 'Name', sortable: false, sortDirection: 'desc' },
+          { key: 'username', label: 'Name', sortable: false, sortDirection: 'desc' },
           { key: 'email', label: 'Email', sortable: false, sortDirection: 'desc' },
           { key: 'contact', label: 'Contact', sortable: false, sortDirection: 'desc' },
-          {
-            key: 'isActive',
-            label: 'Is Active',
-            // formatter: (value, key, item) => {
-            //   return value ? 'Yes' : 'No'
-            // },
-            sortable: false,
-            sortByFormatted: true,
-            filterByFormatted: true
-          },
           { key: 'actions', label: 'Actions' }
         ],
         totalRows: 1,

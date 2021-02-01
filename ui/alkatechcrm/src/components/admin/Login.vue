@@ -75,7 +75,6 @@ axios.defaults.withCredentials = true;
         this.axios.post('http://localhost:8080/lcrm-api/login', this.form).then((response)=>{
           localStorage.setItem('token', response.data.response_body.access_token);
           console.log(response);
-
         })
       },
 
