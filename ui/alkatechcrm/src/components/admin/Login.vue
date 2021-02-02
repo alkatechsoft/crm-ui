@@ -36,7 +36,9 @@
                     <b-nav-item to="link1">Forget Password </b-nav-item>
                 </b-nav>
               </div>
-          <b-button class="ripple" type="submit" variant="primary">Submit</b-button>
+          <b-button class="ripple" type="submit" variant="primary">Submit  <b-spinner class="ml-2" v-if="isLoading" small></b-spinner>
+
+          </b-button>
 
           </b-form-group>
         </b-form>
@@ -66,51 +68,23 @@ axios.defaults.withCredentials = true;
         form: {
           email: '',
           password: ''
-        }
+        },
+        isLoading: false
       }
     },
     methods: {
       onSubmit() {
-        // alert(JSON.stringify(this.form))
+      this.isLoading = true;
+      setTimeout(() => (this.isLoading = false), 3000);
         this.axios.post('http://localhost:8080/lcrm-api/login', this.form).then((response)=>{
+         if(response.data.response_body.access_token){
           localStorage.setItem('token', response.data.response_body.access_token);
+          localStorage.setItem('user_name', response.data.response_body.access_token);
           console.log(response);
+          this.$router.push('/clients')
+         }
         })
       },
-
-      //   this.axios.post('https://8c1cf14a2bed.ngrok.io/lcrm-api/login', this.form, {
-      //   headers: {
-      //       // remove headers
-      //       Accept: 'application/json'
-      //     }
-      // }).then(res => {
-      //   console.log(res);
-      // })},
-//  async onSubmit() {
-//       const User = new FormData();
-//       User.append("email", this.form.email);
-//       User.append("password", this.form.password);
-//       axios
-//         .post("http://192.168.1.14/lcrm-api/list-staff", {
-//           crossDomain: true,
-//           email: this.form.email,
-//           password: this.form.password,
-//         })
-//         .then(function (response) {
-//           console.log(response);
-//         })
-//         .catch(function (error) {
-//           console.log(error);
-//         });
-//     },
-
-//  onSubmit() {
-//        Vue.axios.post("http://localhost:8080/lcrm-api/login").then((response) => {
-//         console.log(response.data)
-//       })
-//       },
-    
-
       onReset(event) {
         event.preventDefault()
         // Reset our form values
@@ -132,6 +106,7 @@ axios.defaults.withCredentials = true;
 
 .card{
       border: 0px solid rgba(0,0,0,.125);
+      top:30%;
 }
 .card-body {
     flex: 1 1 auto;

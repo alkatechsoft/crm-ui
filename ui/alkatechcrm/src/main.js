@@ -30,23 +30,57 @@ Vue.component('ValidationProvider', ValidationProvider);
 
 
 import VueRouter from 'vue-router'
-import Link1 from './components/admin/dashboard/views/Link1'
 import Clientlist from './components/admin/dashboard/views/Clientlist'
 import BulkRegistration from './components/admin/dashboard/views/BulkRegistration'
 import Login from './components/admin/Login'
+
+// import Sidebar from './components/admin/dashboard/Sidebar.vue'
+// import Header from './components/admin/dashboard/Header.vue'
+import Dashboard from './components/admin/dashboard/Dashboard.vue'
 Vue.use(VueRouter)
 const routes=[
-  {path:'/admin', component:Link1},
-  {path:'/link1', component:Link1},
-  {path:'/clients', component:Clientlist},
-  {path:'/bulk-register', component:BulkRegistration},
-  {path:'/link3', component:Login}
+  {
+    name:'admin',
+    path:'/admin', 
+    component:Login
+  },
+  {
+    name:'dashboard',
+    path:'/', 
+    component:Dashboard
+  },
+  {
+    name:'clients',
+    path:'/clients',
+    component:Clientlist
+  },
+  {
+    name:'bulk-register',
+    path:'/bulk-register', 
+    component:BulkRegistration
+  } 
 ]
+
+
+
 const router = new VueRouter({
   routes,
   mode: 'history'
 })
 Vue.config.productionTip = false  
+const openRoutes=['admin'];
+console.log(router.path);
+console.log('router.path');
+// const c=1;
+router.beforeEach((to, from, next) => {
+  if(openRoutes.includes(to.name)){
+    next()
+  } else if(localStorage.getItem('token')){
+   next()
+  } else {
+    next('/admin')
+  }
+})
 
 new Vue({
   router:router,

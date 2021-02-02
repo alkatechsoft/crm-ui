@@ -24,7 +24,7 @@
                 <em><i class="fa fa-user" /></em>
             </template>
              <b-dropdown-item href="#">Profile</b-dropdown-item>
-             <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+             <b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
             </b-nav-item-dropdown>
         </b-navbar-nav>
         </b-collapse>
@@ -32,8 +32,30 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
-name:'Sidebar'
+name:'Header',
+methods:{
+  data(){
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+
+    if(localStorage.removeItem('token')){
+    this.$router.push('/admin')
+
+    }
+  },
+  logout(){
+    localStorage.removeItem('token')
+    this.$router.push('/admin')
+    console.log(window.location.href)
+    location.reload();
+  }
+  //  computed: {
+  //   abcd : function(){
+  //     return this.$router.push('/admin')
+  //   }
+  // }
+}
 }
  
 // function openNav() {

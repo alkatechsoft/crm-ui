@@ -1,7 +1,8 @@
 <template>
   <div id="app">
-    <Header />
-    <Sidebar />
+    <!-- <Header />
+    <Sidebar /> -->
+    <Dashboard />
 <router-view></router-view>
 
   </div>
@@ -9,14 +10,13 @@
 
 <script>
 // import Login from './components/admin/Login.vue'
-import Sidebar from './components/admin/dashboard/Sidebar.vue'
-import Header from './components/admin/dashboard/Header.vue'
-
+// import Sidebar from './components/admin/dashboard/Sidebar.vue'
+// import Header from './components/admin/dashboard/Header.vue'
+import Dashboard from './components/admin/dashboard/Dashboard.vue'
 export default {
   name: 'App',
   components: {
-    Sidebar,
-    Header
+  Dashboard
   }
 }
 </script>
