@@ -1,9 +1,8 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="mt-2">
     <!-- User Interface controls -->
+    <b-card>
     <b-row>
-      
-
       <b-col  offset-lg="" lg="2" offset-md="0" md="5" sm="4"  class="my-1">
         <b-form-group
           label="Filter"
@@ -102,21 +101,24 @@
           size="sm"
           class="my-0"
         ></b-pagination>
+        
       </b-col>
     </b-row>
     <!-- Info modal -->
     <!-- <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
       <pre>{{ infoModal.content }}</pre>
     </b-modal> -->
+    </b-card>
   </b-container>
 </template>
 
  
  <script>
 import axios from 'axios';
+
   export default {
     data() {
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token'); 
       return {
         items: [],
         fields: [
@@ -128,7 +130,7 @@ import axios from 'axios';
         totalRows: 1,
         currentPage: 1,
         perPage: 5,
-        pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
+        pageOptions: [5, 10, 15, { value: 100, text: "Show More" }],
         sortBy: '',
         sortDesc: false,
         sortDirection: 'asc',
@@ -153,13 +155,13 @@ import axios from 'axios';
     },
     mounted() {
       // Set the initial number of items
+      console.log(localStorage.getItem('token'))
         this.axios.post('http://localhost:8080/lcrm-api/list-client').then((response)=>{
         console.log(response);
         this.items=response.data.response_body;
         console.log(this.items)
-        })
-
       this.totalRows = this.items.length
+        })
     },
     methods: {
       info(item, index, button) {
@@ -179,3 +181,20 @@ import axios from 'axios';
     }
   }
 </script>
+<style scoped>
+.card{
+      border: 0px solid rgba(0,0,0,.125);
+     
+}
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.5rem;
+    background: white;
+    box-shadow: 0px 2px 10px 0px #888;
+    border-radius: inherit;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+</style> 
+
+ 

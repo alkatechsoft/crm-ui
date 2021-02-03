@@ -5,7 +5,19 @@
 <b-card>
   <b-card-body>
     <b-form-group>
- <input name="upload_excel" type="file" @change="onFileSelected" />
+      <i class="fa fa-upload upload" aria-hidden="true"></i>
+
+ <!-- <input name="upload_excel" type="file" @change="onFileSelected" /> -->
+
+
+
+
+ <b-form-file
+ class="opacity_0"
+      @change="onFileSelected"
+      placeholder="Choose a file or drop it here..."
+      drop-placeholder="Drop file here..."
+    ></b-form-file>
   </b-form-group>
             <b-form-group size="lg" class="mt-2">
             <b-button class="btn btn-primary" @click="onUpload">upload</b-button>
@@ -53,6 +65,33 @@ import axios from 'axios';
     }
   }
 </script>
+<style scoped>
+ .opacity_0{
+opacity: 0;
+cursor: pointer !important;
+ }
+ .custom-file-label{
+cursor: pointer !important;
+ }
+ .upload{
+   font-size: 45px;
+    color: #330a75;
+    cursor: pointer;
+ }
+ .card{
+      border: 0px solid rgba(0,0,0,.125);
+      top:30%;
+}
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    /* padding: 1rem; */
+    background: white;
+    box-shadow: 0px 2px 10px 0px #888;
+    border-radius: inherit;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+</style>
 
 
 

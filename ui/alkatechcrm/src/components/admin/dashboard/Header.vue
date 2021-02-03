@@ -18,7 +18,16 @@
                 <b-dropdown-item href="#">FA</b-dropdown-item>
             </b-nav-item-dropdown>
 
-            <b-nav-item-dropdown right>
+            <b-nav-item-dropdown v-if="userLogin" right>
+            <!-- Using 'button-content' slot -->
+            <template #button-content>
+                <em><i class="fa fa-user" /></em>
+            </template>
+             <b-dropdown-item href="#">Profile</b-dropdown-item>
+             <b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
+            </b-nav-item-dropdown>
+
+            <b-nav-item-dropdown v-if="1" right>
             <!-- Using 'button-content' slot -->
             <template #button-content>
                 <em><i class="fa fa-user" /></em>
@@ -38,11 +47,25 @@ name:'Header',
 methods:{
   data(){
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-
-    if(localStorage.removeItem('token')){
+    if(localStorage.getItem('token')){
     this.$router.push('/admin')
-
     }
+    return {
+    userLogin:false,
+    userLogout:false
+    }
+  },
+  computed:{
+  set : function(){
+  if(localStorage.getItem('token')!==null){
+    alert('hi')
+  this.userLogin=true;
+  this.userLogout=false;
+  }else{
+  this.userLogin=false;
+  this.userLogout=true;
+  }
+}
   },
   logout(){
     localStorage.removeItem('token')
@@ -50,25 +73,10 @@ methods:{
     console.log(window.location.href)
     location.reload();
   }
-  //  computed: {
-  //   abcd : function(){
-  //     return this.$router.push('/admin')
-  //   }
-  // }
+ 
 }
 }
  
-// function openNav() {
-//   document.getElementById("mySidenav").style.width = "250px";
-//   document.getElementById("main").style.marginLeft = "250px";
-// }
-
-// function closeNav() {
-//   document.getElementById("mySidenav").style.width = "0";
-//   document.getElementById("main").style.marginLeft= "0";
-// }
-
-
 
 
 </script>

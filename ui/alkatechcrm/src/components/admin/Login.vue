@@ -24,9 +24,10 @@
           <b-form-group id="input-group-2"   label-for="input-2">
               <div class="input-container">
                 <i class="fas fa-lock icon"></i>
-                <b-form-input class="input-field" id="input-2" v-model="form.password" type="password" placeholder="Enter password" ></b-form-input>
+                <b-form-input class="input-field" id="input-2" v-model="form.password" @keyup="authUpdate" type="password" placeholder="Enter password" ></b-form-input>
               </div>
             <span class="text-float">{{ errors[0] }}</span>
+            <span class="text-float" v-if="isAuth">Invalid credentials try again</span>
 
           </b-form-group>
             </ValidationProvider>
@@ -69,21 +70,29 @@ axios.defaults.withCredentials = true;
           email: '',
           password: ''
         },
-        isLoading: false
+        isLoading: false,
+        isAuth:false, 
       }
     },
     methods: {
       onSubmit() {
       this.isLoading = true;
-      setTimeout(() => (this.isLoading = false), 3000);
+      setTimeout(() => (this.isLoading = false,this.isAuth = true), 1000);
         this.axios.post('http://localhost:8080/lcrm-api/login', this.form).then((response)=>{
-         if(response.data.response_body.access_token){
+         if(response.data.response_code === '200' && response.data.response_body.access_token){
           localStorage.setItem('token', response.data.response_body.access_token);
           localStorage.setItem('user_name', response.data.response_body.access_token);
+           this.isAuth = true;
           console.log(response);
-          this.$router.push('/clients')
+          this.$router.push('/')
+         } else if(response.data.response_code === '401'){
+           this.isAuth = true; 
+           console.log(response.data.response_code)
          }
         })
+      },
+      authUpdate(){
+        this.isAuth = false
       },
       onReset(event) {
         event.preventDefault()

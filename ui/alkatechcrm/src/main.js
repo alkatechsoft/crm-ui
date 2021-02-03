@@ -36,7 +36,7 @@ import Login from './components/admin/Login'
 
 // import Sidebar from './components/admin/dashboard/Sidebar.vue'
 // import Header from './components/admin/dashboard/Header.vue'
-import Dashboard from './components/admin/dashboard/Dashboard.vue'
+// import Dashboard from './components/admin/dashboard/Dashboard.vue'
 Vue.use(VueRouter)
 const routes=[
   {
@@ -44,11 +44,11 @@ const routes=[
     path:'/admin', 
     component:Login
   },
-  {
-    name:'dashboard',
-    path:'/', 
-    component:Dashboard
-  },
+  // {
+  //   name:'dashboard',
+  //   path:'/', 
+  //   component:Dashboard
+  // },
   {
     name:'clients',
     path:'/clients',
@@ -81,7 +81,7 @@ router.beforeEach((to, from, next) => {
     next('/admin')
   }
 })
-
+Vue.prototype.$appName = localStorage.getItem('token')
 new Vue({
   router:router,
   render: h => h(App),
