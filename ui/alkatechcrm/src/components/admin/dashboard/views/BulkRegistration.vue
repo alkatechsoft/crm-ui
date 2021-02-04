@@ -4,20 +4,20 @@
     <b-col offset-lg="4" offset-md="3" offset-sm="3" lg="4" md="6" sm="6" offset="1" cols="10">
 <b-card>
   <b-card-body>
+     <i class="fa fa-upload upload" aria-hidden="true"></i>
     <b-form-group>
-      <i class="fa fa-upload upload" aria-hidden="true"></i>
 
  <!-- <input name="upload_excel" type="file" @change="onFileSelected" /> -->
-
-
-
 
  <b-form-file
  class="opacity_0"
       @change="onFileSelected"
       placeholder="Choose a file or drop it here..."
       drop-placeholder="Drop file here..."
-    ></b-form-file>
+    >
+    </b-form-file>
+     
+
   </b-form-group>
             <b-form-group size="lg" class="mt-2">
             <b-button class="btn btn-primary" @click="onUpload">upload</b-button>
@@ -58,6 +58,7 @@ import axios from 'axios';
       onUpload(){
       const fileData = new FormData();
         fileData.append("upload_excel", this.selectedFile, this.selectedFile.name);
+        console.log(fileData)
         this.axios.post('http://localhost:8080/lcrm-api/register-client-ExcelUpload', fileData ).then((response)=>{
         console.log(response);
         })
@@ -69,6 +70,8 @@ import axios from 'axios';
  .opacity_0{
 opacity: 0;
 cursor: pointer !important;
+right: 0%;
+top:25%;
  }
  .custom-file-label{
 cursor: pointer !important;
@@ -90,6 +93,10 @@ cursor: pointer !important;
     box-shadow: 0px 2px 10px 0px #888;
     border-radius: inherit;
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+span{
+  pointer-events: visible !important;
+  cursor: pointer;
 }
 </style>
 

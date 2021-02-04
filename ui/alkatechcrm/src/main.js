@@ -32,6 +32,7 @@ Vue.component('ValidationProvider', ValidationProvider);
 import VueRouter from 'vue-router'
 import Clientlist from './components/admin/dashboard/views/Clientlist'
 import BulkRegistration from './components/admin/dashboard/views/BulkRegistration'
+import UploadEmailTemplate from './components/admin/dashboard/views/UploadEmailTemplate'
 import Login from './components/admin/Login'
 
 // import Sidebar from './components/admin/dashboard/Sidebar.vue'
@@ -58,7 +59,12 @@ const routes=[
     name:'bulk-register',
     path:'/bulk-register', 
     component:BulkRegistration
-  } 
+  },
+  {
+    name:'bulk-register',
+    path:'/email-temp', 
+    component:UploadEmailTemplate
+  }  
 ]
 
 
