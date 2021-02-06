@@ -38,6 +38,36 @@ import Login from './components/admin/Login'
 // import Sidebar from './components/admin/dashboard/Sidebar.vue'
 // import Header from './components/admin/dashboard/Header.vue'
 // import Dashboard from './components/admin/dashboard/Dashboard.vue'
+
+
+
+
+
+
+
+Vue.prototype.$localStorage = new Vue({
+  data: { 
+     // token property returning the ls token value 
+     token: window.localStorage.getItem('token'), 
+     username:window.localStorage.getItem('username') 
+  },
+  watch:{ 
+     // watcher listening for changes on the token property
+     // to ensure the new value is written back to ls 
+     token(value){ window.localStorage.setItem('token', value)},
+     username(value){ window.localStorage.setItem('username', value)} 
+  }
+})
+
+
+
+
+
+
+
+
+
+
 Vue.use(VueRouter)
 const routes=[
   {

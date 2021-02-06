@@ -1,7 +1,7 @@
 <template>
   <div>
-  <Header  />
-  <Sidebar  />
+  <Header  v-if="isLoggedIn" />
+  <Sidebar v-if="isLoggedIn"  />  
   </div>
 </template>
 
@@ -15,8 +15,13 @@ data(){
 showheader:true 
   }
 },
+ computed:{  
+        isLoggedIn(){ 
+          return this.$localStorage.token && this.$localStorage.token !== '' ; 
+          }
+ },
  mounted(){
-    if(localStorage.getItem('token')){
+    if(localStorage.getItem('token') !==''){
     // this.showheader=true;
   localStorage.setItem('headerCheack',true)
   console.log('after mount', localStorage.getItem('headerCheack'))

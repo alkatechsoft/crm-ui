@@ -13,6 +13,12 @@
 // import Sidebar from './components/admin/dashboard/Sidebar.vue'
 // import Header from './components/admin/dashboard/Header.vue'
 import Dashboard from './components/admin/dashboard/Dashboard.vue'
+
+
+
+
+
+
 export default {
   name: 'App',
   components: {

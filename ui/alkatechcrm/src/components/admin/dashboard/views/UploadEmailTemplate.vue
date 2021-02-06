@@ -33,8 +33,29 @@
             drop-placeholder="Drop file here..."
           >
           </b-form-file>
+           
               </div>
+              <b-alert
+                show
+                class="elementToFadeInAndOut mt-2"
+                variant="danger"
+                v-if="fileFormateError"
+              >
+                <span variant="secondary" class="text-float"
+                  >Please upload email template (.html file only)
+                </span></b-alert
+              >
          </b-form-group>
+               <b-alert
+                show
+                class="elementToFadeInAndOut mt-2"
+                variant="success"
+                v-if="isUploaded"
+              >
+                <span variant="success" class="text-float"
+                  > <i class="fa fa-smile" /> Uploaded Succesfully
+                </span></b-alert
+              >
           <b-form-group id="submit-template"  label-for="submit-template">
           <b-button class="ripple" type="submit" variant="primary"> Submit  
           </b-button>
@@ -42,9 +63,9 @@
         </b-form>
     </ValidationObserver>
     </b-card>
-    <b-card class="mt-3" header="Form Data Result">
+    <!-- <b-card class="mt-3" header="Form Data Result">
       <pre class="m-0">selected: {{ selected }} template: {{template}} title:{{ title }}  category:{{ category }}</pre>
-    </b-card>
+    </b-card> -->
     </b-col>
     
       </b-row>
@@ -68,6 +89,8 @@ import axios from 'axios';
        selected: 0,
        template:null,
        title:null,
+       fileFormateError: false,
+       isUploaded:false,
         category: [
           { value: null, text: 'Category not available' }
         ]
@@ -76,16 +99,20 @@ import axios from 'axios';
       mounted() {
       // Set the initial number of items
         this.axios.post('http://localhost:8080/lcrm-api/mtk-list-parent-category').then((response)=>{
-         if(response.data.response_code === '200'){
-          console.log(response.data.response_body);
+         if(response.data.response_code === 200){
+          console.log('categrylist', response.data.response_body);
          let getData = response.data.response_body.map((data) => ({ value: data.id, text: data.category_name }));
         this.category=getData;
         console.log(getData.length);
+         }else{
+           console.log('error', response.data.response_body)
          }
         })
     },
     methods: {
        onFileSelected(event){
+       this.fileFormateError = false;
+
       alert('file selected')
       console.log(event);
       this.template=event.target.files[0]
@@ -93,18 +120,34 @@ import axios from 'axios';
       },
       onUploadData() {
         alert('submiited')
-      console.log('onsubit..')
+        console.log('onsubit..')
         const formData = new FormData();
         formData.append("template", this.template, this.template.name);
+
+if (this.template.name.split(".").pop() !== "html") {
+        this.fileFormateError = true;
+        console.log("fileFormateError:", this.fileFormateError);
+        console.log("extension is: ", this.selectedFile.name.split(".").pop());
+      } else{
+        this.fileName = false;
+      
         formData.append("title", this.title);
         formData.append("categories", this.selected);
         console.log('mmmmm',formData)
         this.axios.post('http://localhost:8080/lcrm-api/mtk-register-mail-template-file', formData).then((response)=>{
+           console.log('responce : ',response.data.response_code)
+         if(response.data.response_code === 200){
            console.log(Response.data.response_body)
-         if(response.data.response_code === '200'){
-           console.log(Response.data.response_body)
-         }  
+            this.isUploaded=true
+           alert('vbvbvb')
+
+         }else{
+           alert('asas')
+            this.isUploaded=true
+
+         }
         })
+       }
       }
     }
   }

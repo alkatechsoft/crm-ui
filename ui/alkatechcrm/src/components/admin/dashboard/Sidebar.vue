@@ -16,7 +16,7 @@
                     <b-nav-item to="clients" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Clients </b-nav-item>
                     <b-nav-item to="bulk-register" @click="hide"><i class="fa fa-file-excel" /> &nbsp; &nbsp; Bulk Registration </b-nav-item>
                     <b-nav-item to="email-temp" @click="hide"><i class="fa fa-upload" /> &nbsp; &nbsp; Email Template </b-nav-item>
-                    <b-nav-item to="link1" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Link1 </b-nav-item>
+                    <b-nav-item @click="logout"><i class="fa fa-user" /> &nbsp; &nbsp; Logout </b-nav-item>
                   </b-nav>
                 </nav>
               
@@ -45,6 +45,18 @@
           'info',
         ]
       }
+    },
+    methods:{
+    logout(){
+    localStorage.removeItem('token')
+    this.$localStorage.token = ''
+    console.log('on logout tokennnnnnn',this.$localStorage.token)
+
+    this.$router.push('/admin')
+    // console.log(window.location.href)
+    // location.reload();
+  }
+ 
     }
   }
 </script>

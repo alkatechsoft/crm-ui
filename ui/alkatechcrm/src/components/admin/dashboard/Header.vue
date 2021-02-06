@@ -11,28 +11,18 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-            <b-nav-item-dropdown text="Lang" right>
+            <!-- <b-nav-item-dropdown text="Lang" right>
                 <b-dropdown-item href="#">EN</b-dropdown-item>
                 <b-dropdown-item href="#">ES</b-dropdown-item>
                 <b-dropdown-item href="#">RU</b-dropdown-item>
                 <b-dropdown-item href="#">FA</b-dropdown-item>
-            </b-nav-item-dropdown>
-
-            <b-nav-item-dropdown v-if="userLogin" right>
-            <!-- Using 'button-content' slot -->
-            <template #button-content>
-                <em><i class="fa fa-user" /></em>
-            </template>
-             <b-dropdown-item href="#">Profile</b-dropdown-item>
-             <b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
-            </b-nav-item-dropdown>
-
+            </b-nav-item-dropdown> -->
             <b-nav-item-dropdown v-if="1" right>
             <!-- Using 'button-content' slot -->
             <template #button-content>
                 <em><i class="fa fa-user" /></em>
             </template>
-             <b-dropdown-item href="#">Profile</b-dropdown-item>
+             <b-dropdown-item v-if="this.$localStorage.username" href="#"> {{this.$localStorage.username}}</b-dropdown-item>
              <b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
             </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -41,12 +31,12 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 export default {
 name:'Header',
 methods:{
   data(){
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+    console.log('global token in header',this.$localStorage.token)
     if(localStorage.getItem('token')){
     this.$router.push('/admin')
     }
@@ -55,23 +45,11 @@ methods:{
     userLogout:false
     }
   },
-  computed:{
-  set : function(){
-  if(localStorage.getItem('token')!==null){
-    alert('hi')
-  this.userLogin=true;
-  this.userLogout=false;
-  }else{
-  this.userLogin=false;
-  this.userLogout=true;
-  }
-}
-  },
   logout(){
     localStorage.removeItem('token')
+    this.$localStorage.token = ''
+          console.log('on logout tokennnnnnn',this.$localStorage.token)
     this.$router.push('/admin')
-    console.log(window.location.href)
-    location.reload();
   }
  
 }
