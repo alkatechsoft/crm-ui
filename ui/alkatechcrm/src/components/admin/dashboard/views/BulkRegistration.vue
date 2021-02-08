@@ -19,11 +19,11 @@
 
               <b-form-file
                 class="opacity_0"
-                style="height: 100px !important"
+                id="s-input-file"
                 @change="onFileSelected"
                 placeholder="Choose a file or drop it here..."
                 drop-placeholder="Drop file here..."
-                accept=".csv"
+                accept=".csv,.xlsx"
                 :disabled="busy"
               >
               </b-form-file>
@@ -57,7 +57,7 @@
                 v-if="fileFormateError"
               >
                 <span variant="secondary" class="text-float"
-                  >Please upload .csv file only
+                  >Please upload .csv,.xlsx file only
                 </span></b-alert
               >
               <b-alert>
@@ -137,7 +137,7 @@
                 class="btn-block ripple"
                 @click="onUpload"
                 :disabled="busy"
-                >upload</b-button
+                >Upload</b-button
               >
             </b-form-group>
           </b-card-body>
@@ -261,7 +261,7 @@ export default {
         this.selectedFile.name
       );
       console.log(fileData1);
-      if (this.selectedFile.name.split(".").pop() !== "csv") {
+      if (this.selectedFile.name.split(".").pop() !== "csv" && this.selectedFile.name.split(".").pop() !== "xlsx") {
         this.fileFormateError = true;
         this.fileName = false;
         console.log("fileFormateError:", this.fileFormateError);
@@ -287,12 +287,13 @@ export default {
   opacity: 0;
   cursor: pointer !important;
   right: 0%;
-  top: 15%;
+  top: 25%;
   position: absolute;
 }
-div.custom-file-label {
-  height: 100px !important;
+#s-input-file__BV_file_outer_>label {
+    padding: 46px !important;
 }
+ 
 .custom-file-label {
   cursor: pointer !important;
 }
@@ -317,6 +318,9 @@ div.custom-file-label {
   box-shadow: 0px 2px 10px 0px #888;
   border-radius: inherit;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+#__BVID__33__BV_file_outer_ > label{
+  padding: 45px !important;
 }
 span {
   pointer-events: visible !important;
@@ -344,7 +348,7 @@ div.custom-file-input {
   text-align: center;
   text-decoration: none;
   transition: 0.3s;
-  border-radius: 30px;
+  /* border-radius: 0px; */
   border: 2px solid #3e3ebb;
   outline: none;
   white-space: nowrap;

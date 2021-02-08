@@ -11,10 +11,11 @@
      <ValidationObserver v-slot="{ handleSubmit }">
         <b-form  @submit.prevent="handleSubmit(onUploadData)" class="mt-2">
            <b-form-group id="input-group-1" label-for="input-1">
-              <div class="input-container">
+              <!-- <div class="input-container"> -->
                  <b-form-select v-model="selected" :options="category"></b-form-select>
+                 
                  <!-- <div class="mt-3">Selected: <strong>{{ selected }}</strong></div> -->
-                 </div>
+                 <!-- </div> --> 
           </b-form-group>
           <ValidationProvider name="title" rules="required" v-slot="{ errors }">
          <b-form-group id="input-group-2" label-for="input-1">
@@ -24,6 +25,8 @@
              <span class="text-float">{{ errors[0] }}</span>
           </b-form-group>
       </ValidationProvider>
+          <ValidationProvider name="template" rules="required" v-slot="{ errors }">
+
          <b-form-group id="input-group-3" label-for="input-3">
           <div class="input-container">
           <b-form-file
@@ -31,6 +34,7 @@
             @change="onFileSelected"
             placeholder="Choose a file or drop it here..."
             drop-placeholder="Drop file here..."
+            v-model="template" 
           >
           </b-form-file>
            
@@ -45,7 +49,10 @@
                   >Please upload email template (.html file only)
                 </span></b-alert
               >
+             <span class="text-float">{{ errors[0] }}</span>
+
          </b-form-group>
+          </ValidationProvider>
                <b-alert
                 show
                 class="elementToFadeInAndOut mt-2"
@@ -53,9 +60,20 @@
                 v-if="isUploaded"
               >
                 <span variant="success" class="text-float"
-                  > <i class="fa fa-smile" /> Uploaded Succesfully
-                </span></b-alert
-              >
+                  > <i class="fa fa-smile" /> Submitted Succesfully
+                </span>
+                </b-alert>
+                <b-alert
+                show
+                class="elementToFadeInAndOut mt-2"
+                variant="danger"
+                v-if="isUploadedError"
+                 >
+                <span variant="danger" class="text-float" v-for="responseError in responseErrordData" :key="responseError.fieldName"
+                  ><i class="fa fa-frown mr-2" />
+                  {{responseError.message[0]}}
+                </span>
+                </b-alert>
           <b-form-group id="submit-template"  label-for="submit-template">
           <b-button class="ripple" type="submit" variant="primary"> Submit  
           </b-button>
@@ -84,15 +102,18 @@ import axios from 'axios';
   export default {
       name:'UploadEmailTemplate',
     data() {
+    
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token'); 
       return {
-       selected: 0,
-       template:null,
-       title:null,
+       selected: null,
+       template:null, 
+      title:'',
        fileFormateError: false,
+       isUploadedError:false,
        isUploaded:false,
+       responseErrordData: [],
         category: [
-          { value: null, text: 'Category not available' }
+           { value: null, text: 'Please select an option' }
         ]
       }
     },
@@ -101,52 +122,84 @@ import axios from 'axios';
         this.axios.post('http://localhost:8080/lcrm-api/mtk-list-parent-category').then((response)=>{
          if(response.data.response_code === 200){
           console.log('categrylist', response.data.response_body);
-         let getData = response.data.response_body.map((data) => ({ value: data.id, text: data.category_name }));
-        this.category=getData;
-        console.log(getData.length);
+          response.data.response_body.map((data) => this.category.push({ value: data.id, text: data.category_name }));
+         console.log('carttttttttttttt',this.category);
          }else{
-           console.log('error', response.data.response_body)
+           this.category.push({ value: null, text: ' 👀 No Category Found' })
+           console.log('nocatfound...')
          }
-        })
+        }).catch(function (error){
+        console.log( error);
+      });
+      // this.reset()
+    },
+    beforeDestroy(){
+// alert('before destroy')
     },
     methods: {
        onFileSelected(event){
        this.fileFormateError = false;
+       this.isUploadedError='';
+       this.isUploaded=false;
 
-      alert('file selected')
-      console.log(event);
+        console.log(event);
       this.template=event.target.files[0]
       console.log(this.template)
       },
+      reset(){
+        alert('reset method called')
+              this.selected= null;
+              this.template=null;
+              this.title="";
+              this.fileFormateError= false;
+              this.isUploadedError=false;
+              this.isUploaded=false;
+      },
       onUploadData() {
-        alert('submiited')
+        // alert('submiited')
         console.log('onsubit..')
         const formData = new FormData();
         formData.append("template", this.template, this.template.name);
-
-if (this.template.name.split(".").pop() !== "html") {
+        if (this.template.name.split(".").pop() !== "html") {
         this.fileFormateError = true;
         console.log("fileFormateError:", this.fileFormateError);
         console.log("extension is: ", this.selectedFile.name.split(".").pop());
       } else{
         this.fileName = false;
-      
         formData.append("title", this.title);
         formData.append("categories", this.selected);
         console.log('mmmmm',formData)
         this.axios.post('http://localhost:8080/lcrm-api/mtk-register-mail-template-file', formData).then((response)=>{
            console.log('responce : ',response.data.response_code)
          if(response.data.response_code === 200){
-           console.log(Response.data.response_body)
             this.isUploaded=true
-           alert('vbvbvb')
-
+            this.isUploadedError=false;
+            console.log(Response.data.response_description.Error_Records.title)
+            this.title=''
          }else{
-           alert('asas')
-            this.isUploaded=true
+            this.isUploaded=false
+            this.isUploadedError=true;
 
+            // console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa', response.data.response_description.Error_Records)
+            // console.log('test1',response.data.response_description.Error_Records.title);
+           
+              //  var getErrorData = response.data.response_description.Error_Records.map((data) => this.responseErrordData.push({text: data }));
+              //  this.responseErrordData=getErrorData;
+                //  console.log('errrrrrr',this.responseErrordData);
+let errors = response.data.response_description.Error_Records;
+  let getErrorData = Object.keys(errors).map((field) => {
+          return {
+            fieldName: field,
+            message: errors[field],
+          };
+        });
+         console.log('this is a resuluts',getErrorData)
+         this.responseErrordData=getErrorData;
          }
-        })
+
+        }).catch(function (error){
+        console.log( error);
+      });
        }
       }
     }
@@ -256,6 +309,10 @@ if (this.template.name.split(".").pop() !== "html") {
   border-radius: 0rem 0.25rem 0.25rem 0rem;
 }
 .text-float{
+}
+.fa-frown{
+  color: red;
+  font-size: 20px;
 }
 </style>
 
