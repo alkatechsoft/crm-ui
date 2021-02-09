@@ -33,6 +33,7 @@ import VueRouter from 'vue-router'
 import Clientlist from './components/admin/dashboard/views/Clientlist'
 import BulkRegistration from './components/admin/dashboard/views/BulkRegistration'
 import UploadEmailTemplate from './components/admin/dashboard/views/UploadEmailTemplate'
+import Groups from './components/admin/dashboard/views/Groups'
 import Login from './components/admin/Login'
 
 // import Sidebar from './components/admin/dashboard/Sidebar.vue'
@@ -91,9 +92,14 @@ const routes=[
     component:BulkRegistration
   },
   {
-    name:'bulk-register',
+    name:'email-temp',
     path:'/email-temp', 
     component:UploadEmailTemplate
+  },
+  {
+    name:'groups',
+    path:'/groups', 
+    component:Groups
   }  
 ]
 

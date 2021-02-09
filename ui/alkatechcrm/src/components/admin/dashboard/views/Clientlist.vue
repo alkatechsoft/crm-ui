@@ -2,6 +2,52 @@
   <b-container fluid class="mt-2">
     <!-- User Interface controls -->
     <b-card>
+    <b-row style="background:#ebebeb;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; margin-bottom:1rem" class="pt-3">
+      <!-- <b-col>
+ <b-form-group
+      label="Select Type:"
+      label-for="table-select-mode-select"
+      label-cols-lg="2"
+      label-cols-md="6"
+      label-cols-sm="6"
+    >
+      <b-form-select
+        id="table-select-mode-select"
+        v-model="selectMode"
+        :options="modes"
+        class="mb-0"
+      ></b-form-select>
+    </b-form-group>
+      </b-col> -->
+      <b-col>
+        <b-form-group id="input-group-1" label-for="input-1">
+              <b-form-select v-model="templateSelected" :options="templateFiles"></b-form-select>
+        </b-form-group>
+      </b-col>
+      <b-col>
+         
+<b-form-group>
+<!-- <b-button size="sm" @click="selectAllRows">Select all</b-button> -->
+<b-form-checkbox @change="selectAllRows">All</b-form-checkbox> 
+</b-form-group>
+      </b-col>
+      <b-col>
+         <b-form-input
+              id="filter-input"
+              v-model="groupTitle"
+              type="text"
+              placeholder="Group Name"
+            ></b-form-input>
+      </b-col>
+       <b-col>
+         <b-button
+              id="create-group"
+              variant="primary"
+              type="button"
+              @click="onGroupCreate"
+            >Create Group</b-button>
+      </b-col>
+    </b-row>
     <b-row>
       <b-col  offset-lg="" lg="2" offset-md="0" md="5" sm="4"  class="my-1">
         <b-form-group
@@ -48,6 +94,7 @@
     </b-row>
 
     <!-- Main table element -->
+    
     <b-table
       :items="items"
       :fields="fields"
@@ -62,7 +109,15 @@
       show-empty
       small
       @filtered="onFiltered"
+      :select-mode="selectMode"
+      responsive="sm"
+      ref="selectableTable"
+      selectable
+      @row-selected="onRowSelected"
+      :tbody-transition-props="transProps"
+      id="table-transition-example"
     >
+    
       <template #cell(name)="row">
         {{ row.value.first }} {{ row.value.last }}
       </template>
@@ -73,6 +128,7 @@
        Delete
     </b-button>
   </template>
+  
       <!-- <template #cell(actions)="row">
          <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
           Info modal
@@ -90,7 +146,29 @@
           </ul>
         </b-card>
       </template>
+       <!-- Example scoped slot for select state illustrative purposes -->
+      <template #cell(selected)="{ rowSelected }">
+        <template v-if="rowSelected">
+          <span aria-hidden="true">&check;</span>
+          <span class="sr-only">Selected</span>
+        </template>
+        <template v-else>
+          <span aria-hidden="true">&nbsp;</span>
+          <span class="sr-only">Not selected</span>
+        </template>
+      </template>
     </b-table>
+    <!-- <p>
+          <b-button size="sm" @click="clearSelected">Clear selected</b-button>
+    </p> -->
+    <p>
+      Selected Rows:<br>
+      {{ selected }}
+      selected template:<br>
+      {{templateSelected}}
+      group title: <br>
+      {{groupTitle}}
+    </p>
      <b-row>
       <b-col sm="7" md="3" lg="2" class="my-1">
         <b-pagination
@@ -120,13 +198,22 @@ import axios from 'axios';
     data() {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token'); 
       return {
-        items: [],
+        groupTitle:null,
+        templateFiles:[
+           { value: null, text: 'Asign Template' }
+        ],
+        templateSelected:null,
+        modes: ['multi', 'single', 'range'],
+         items: [],
         fields: [
           { key: 'username', label: 'Name', sortable: false, sortDirection: 'desc' },
           { key: 'email', label: 'Email', sortable: false, sortDirection: 'desc' },
           { key: 'contact', label: 'Contact', sortable: false, sortDirection: 'desc' },
           { key: 'actions', label: 'Actions' }
         ],
+        selectMode: 'multi',
+        selected: [],
+        selectedUsersID:[],
         totalRows: 1,
         currentPage: 1,
         perPage: 5,
@@ -155,15 +242,38 @@ import axios from 'axios';
     },
     mounted() {
       // Set the initial number of items
-      console.log(localStorage.getItem('token'))
+        console.log(localStorage.getItem('token'))
         this.axios.post('http://localhost:8080/lcrm-api/list-client').then((response)=>{
         console.log(response);
         this.items=response.data.response_body;
         console.log(this.items)
-      this.totalRows = this.items.length
+        this.totalRows = this.items.length
+        })
+        this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template').then((responseData)=>{
+          responseData.data.response_body.map((data) => this.templateFiles.push({ value: data.id, text: data.title }));
+          console.log(responseData)
         })
     },
     methods: {
+      onGroupCreate(){
+         console.log('groupData', this.selected)
+         this.selected.map((data) => this.selectedUsersID.push(data.id));
+         console.log('users::::', this.selectedUsersID, this.groupTitle, this.templateSelected)
+         let createGroupData ={
+           users:this.selectedUsersID,
+           title:this.groupTitle,
+           template:this.templateSelected
+         }
+         console.log('dataaaaaaaa:::::::::', createGroupData)
+         this.axios.post('http://localhost:8080/lcrm-api/mtk-register-alot-user-to-template', createGroupData).then((response)=>{
+           console.log('responce : ',response.data.response_code)
+         if(response.data.response_code === 200){
+            this.isUploaded=true
+            this.isUploadedError=false;
+            this.title=''
+         }
+         })
+      },
       info(item, index, button) {
         this.infoModal.title = `Row index: ${index}`
         this.infoModal.content = JSON.stringify(item, null, 2)
@@ -177,7 +287,17 @@ import axios from 'axios';
         // Trigger pagination to update the number of buttons/pages due to filtering
         this.totalRows = filteredItems.length
         this.currentPage = 1
-      }
+      },
+
+      onRowSelected(items) {
+        this.selected = items
+      },
+      selectAllRows() {
+        this.$refs.selectableTable.selectAllRows()
+      },
+      clearSelected() {
+        this.$refs.selectableTable.clearSelected()
+      },
     }
   }
 </script>
