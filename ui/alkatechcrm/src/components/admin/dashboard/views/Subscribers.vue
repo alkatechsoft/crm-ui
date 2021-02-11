@@ -36,7 +36,7 @@
               id="filter-input"
               v-model="groupTitle"
               type="text"
-              placeholder="Group Name"
+              placeholder="Subscriber Type"
             ></b-form-input>
       </b-col>
        <b-col>
@@ -45,7 +45,7 @@
               variant="primary"
               type="button"
               @click="onGroupCreate"
-            >Create Group</b-button>
+            >Create Campaign</b-button>
       </b-col>
     </b-row>
     <b-row>
@@ -259,7 +259,7 @@ import axios from 'axios';
          console.log('groupData', this.selected)
          this.selected.map((data) => this.selectedUsersID.push(data.id));
          console.log('users::::', this.selectedUsersID, this.groupTitle, this.templateSelected)
-         let createGroupData ={
+         let createGroupData = {
            users:this.selectedUsersID,
            title:this.groupTitle,
            template:this.templateSelected

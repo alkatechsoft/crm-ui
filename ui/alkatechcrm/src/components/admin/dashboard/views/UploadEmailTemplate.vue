@@ -10,6 +10,7 @@
     <b-card class="bg-light">
      <ValidationObserver v-slot="{ handleSubmit }">
         <b-form  @submit.prevent="handleSubmit(onUploadData)" class="mt-2">
+          
            <b-form-group id="input-group-1" label-for="input-1">
               <!-- <div class="input-container"> -->
                  <b-form-select v-model="selected" :options="category"></b-form-select>

@@ -13,10 +13,10 @@
                 <nav class="mb-3 s-sidenav-text">
                   <hr>
                   <b-nav vertical>
-                    <b-nav-item to="clients" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Clients </b-nav-item>
-                    <b-nav-item to="bulk-register" @click="hide"><i class="fa fa-file-excel" /> &nbsp; &nbsp; Bulk Registration </b-nav-item>
+                    <b-nav-item to="subscribers" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Subscribers </b-nav-item>
+                    <b-nav-item to="bulk-register" @click="hide"><i class="fa fa-file-excel" /> &nbsp; &nbsp; Import Subscriber </b-nav-item>
                     <b-nav-item to="email-temp" @click="hide"><i class="fa fa-upload" /> &nbsp; &nbsp; Email Template </b-nav-item>
-                    <b-nav-item to="groups" @click="hide"><i class="fa fa-users" /> &nbsp; &nbsp; Groups </b-nav-item>
+                    <b-nav-item to="groups" @click="hide"><i class="fa fa-users" /> &nbsp; &nbsp; Groups</b-nav-item>
                     <b-nav-item @click="logout"><i class="fa fa-user" /> &nbsp; &nbsp; Logout </b-nav-item>
                   </b-nav>
                 </nav>
@@ -70,5 +70,9 @@
     position: fixed;
     bottom:0;
     left:0;
+  }
+  .fa{
+        font-size: 20px;
+        color: #3e3ebb;
   }
 </style>
