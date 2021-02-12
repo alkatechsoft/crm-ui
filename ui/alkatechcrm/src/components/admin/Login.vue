@@ -123,11 +123,10 @@ export default {
             console.log("on login username", this.$localStorage.username);
             this.isAuth = false;
             console.log(response);
-            this.$router.push("/clients");
+            this.$router.push("/subscribers");
           } else if (response.data.response_code === "401") {
             this.isAuth = true;
             this.$router.push("/admin");
-
             console.log(response.data.response_code);
           }
         });

@@ -3,7 +3,9 @@ import 'mutationobserver-shim'
 import Vue from 'vue'
 import './plugins/bootstrap-vue'
 import App from './App.vue'
- 
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+
 //axios for api for start
 import axios from 'axios'
 import VueAxios from 'vue-axios'
@@ -26,6 +28,8 @@ localize('en', en);
 // Install components globally
 Vue.component('ValidationObserver', ValidationObserver);
 Vue.component('ValidationProvider', ValidationProvider);
+Vue.component("v-select", vSelect);
+
 
 
 

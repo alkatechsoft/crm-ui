@@ -1,19 +1,40 @@
 <template>
-  <b-container fluid class="mt-2">
+  <b-container fluid class="mt-0">
     <b-row>
-      <b-col
-        offset-lg="4"
-        offset-md="3"
-        offset-sm="3"
-        lg="4"
-        md="6"
-        sm="6"
-        offset="1"
-        cols="10"
-      >
+      <b-col>
         <b-card>
           <b-card-body>
-            <i class="fa fa-upload upload" aria-hidden="true"></i>
+            <b-form-group>
+             <b-alert
+                show
+                class="elementToFadeInAndOut mt-2"
+                variant="success"
+                v-if="true"
+              >
+              <p style="text-align:left;"><b>Support Formate :</b>.csv,.xls,.xlsx </p>
+              <p style="text-align:left"><b>Sheet Formate:</b> email, username</p>
+                
+                </b-alert>
+            </b-form-group>
+            <b-form-group>
+            <v-select 
+              v-model="selectCategory"
+              placeholder="seclect"
+              size="sm"
+              :options="category"
+              :filterable="true"
+              :multiple="true"
+              :taggable="true"
+              :create-option="option => ({value: option.toLowerCase(), label: option})">
+            </v-select>
+            <!-- <b-form-select v-model="selected" :options="category"></b-form-select> -->
+                 <!-- selected:   {{selectCategory}}<br> -->
+                 <!-- seletd id: {{selectCategory }} -->
+                 <!-- </div> --> 
+          </b-form-group>
+         
+
+            <i class="fa fa-upload upload" aria-hidden="true" v-b-popover.hover.top="'Support Formate .csv/.xls/.xlsx Sheet Formate: email, username'" title="File" ></i>
             <b-form-group>
               <!-- <input name="upload_excel" type="file" @change="onFileSelected" /> -->
 
@@ -26,8 +47,10 @@
                 accept=".csv,.xlsx"
                 :disabled="busy"
               >
+              
               </b-form-file>
               <div>
+                
                 <!-- <b-alert v-if="fileFormateError" variant="primary"><a href="#" class="alert-link">{{this.selectedFile.name}}</a></b-alert> -->
               </div>
                 <b-alert
@@ -143,6 +166,47 @@
           </b-card-body>
         </b-card>
       </b-col>
+      <b-col>
+        <b-card>
+          <b-card-body>
+            <b-list-group>
+            <b-list-group-item class="d-flex justify-content-between align-items-center">
+              Passed Records 
+              <b-badge variant="primary" pill>{{this.Passed_Records}}</b-badge>
+            </b-list-group-item>
+
+            <b-list-group-item class="d-flex justify-content-between align-items-center">
+              Faild Records
+              <b-badge variant="primary" pill>{{this.Failed_Records}}</b-badge>
+
+            </b-list-group-item>
+            <b-list-group-item class="d-flex justify-content-between align-items-center">
+              <!-- Excluded Records  {{this.excludedData}} -->
+            </b-list-group-item>
+            </b-list-group>
+          </b-card-body>
+        </b-card>
+      </b-col>
+      </b-row>
+      <b-row class="mt-4">
+      <b-col>
+          
+        <b-card>
+           <b-alert
+                show
+                class="elementToFadeInAndOut mt-2"
+                variant="danger"
+                v-if="1"
+              >
+                <span variant="danger" class="text-float"
+                  ><i class="fa fa-frown mr-2" /> Excluded Data ( Either they have duplcate or missing )
+                </span></b-alert
+              >
+        <b-card-body>
+             <b-table striped hover :items="excludedData" :fields="fields"></b-table>
+       </b-card-body>
+        </b-card>
+      </b-col>
     </b-row>
   </b-container>
 </template>
@@ -158,14 +222,15 @@
 
 <script>
 import axios from "axios";
-
 export default {
   data() {
-    axios.defaults.headers.common["Authorization"] =
-      "Bearer " + localStorage.getItem("token");
-
+    axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
     return {
+       fields: [],
+      excludedData: [],
       selectedFile: null,
+      selectCategory:null,
+      selectedCategoryData:[{value:'avc',label:'hjhj'}],
       fileName: false,
       fileFormateError: false,
       isUploadedError:'',
@@ -173,10 +238,28 @@ export default {
       processing: false,
       counter: 1,
       interval: null,
-      isUploaded:false
-    };
+      isUploaded:false,
+      reportData:[],
+      Passed_Records:null,
+      Failed_Records:null,
+     category: [{ value: null, label: 'Please select an option' }],
+    }
   },
-
+   mounted() {
+      // Set the initial number of items
+        this.axios.post('http://localhost:8080/lcrm-api/lcrm-list-parent-category').then((response)=>{
+         if(response.data.response_code === 200){
+          console.log('categrylist', response.data.response_body);
+          response.data.response_body.map((data) => this.category.push({ value: data.id, label: data.category_name }));
+         console.log('carttttttttttttt',this.category);
+         }else{
+           this.category.push({ value: null, label: ' 👀 No Category Found' })
+          }
+        }).catch(function (error){
+        console.log( error);
+      });
+      // this.reset()
+    },
   beforeDestroy() {
     this.clearInterval();
   },
@@ -217,11 +300,22 @@ export default {
           this.$nextTick(() => {
             this.busy = this.processing = false;
             const fileData = new FormData();
+            var category_name = [];
+            for(var i=0; i<this.selectCategory.length; i++){
+            console.log('category_name', this.selectCategory[i].label)
+            category_name[i]=this.selectCategory[i].label
+            this.selectedCategoryData[i]=this.selectCategory[i].label
+            }
+            console.log(category_name);
+            for (var  k = 0; k < category_name.length; k++) {
+                fileData.append('category_name[]', category_name[k]);
+            }
             fileData.append(
             "upload_excel",
             this.selectedFile,
-            this.selectedFile.name
+            this.selectedFile.name,
             );
+            // fileData.append("category_name", category_name1);
             this.axios
               .post(
                 "http://localhost:8080/lcrm-api/register-client-ExcelUpload",
@@ -234,6 +328,30 @@ export default {
                 this.fileName=false
                 this.processing = false;
                 this.isUploaded=true
+                let errors = response.data.response_description.Excluded_Records;
+               this.Passed_Records =  response.data.response_description.Passed_Records;
+               this.Failed_Records =  response.data.response_description.Failed_Records;
+              let getErrorData = Object.keys(errors).map((field) => {
+                        return {
+                          fieldName: field,
+                          message: errors[field],
+                        };
+                      });
+                console.log('reports ::', getErrorData)
+          for(var k=0; k<errors.length; k++ ){
+                    // getErrorData.map((data) => this.fields.push(data.message));
+           this.excludedData.push(errors[k])
+          }
+
+
+
+
+
+
+
+
+                 this.excludedData.push(response.data.response_description.Excluded_Records);
+alert(this.excludedData)
                 }else{
                 this.isUploadedError=response.data.response_message
                 this.fileName=false
@@ -260,6 +378,8 @@ export default {
         this.selectedFile,
         this.selectedFile.name
       );
+
+
       console.log(fileData1);
       if (this.selectedFile.name.split(".").pop() !== "csv" && this.selectedFile.name.split(".").pop() !== "xlsx") {
         this.fileFormateError = true;
@@ -268,15 +388,6 @@ export default {
         console.log("extension is: ", this.selectedFile.name.split(".").pop());
       } else {
         this.busy = true;
-        // this.axios
-        //   .post(
-        //     "http://localhost:8080/lcrm-api/register-client-ExcelUpload",
-        //     fileData
-        //   )
-        //   .then((response) => {
-        //     console.log(response);
-        //     this.processing = false;
-        //   });
       }
     },
   },
@@ -287,7 +398,7 @@ export default {
   opacity: 0;
   cursor: pointer !important;
   right: 0%;
-  top: 25%;
+  top: 55%;
   position: absolute;
 }
 #s-input-file__BV_file_outer_>label {
@@ -298,7 +409,7 @@ export default {
   cursor: pointer !important;
 }
 .upload {
-  font-size: 45px;
+  font-size: 25px;
   color: #fff;
   cursor: pointer;
   background: #3e3ebb;
@@ -308,16 +419,18 @@ export default {
 }
 .card {
   border: 0px solid rgba(0, 0, 0, 0.125);
-  top: 30%;
+  top: 10%;
+  box-shadow: 0px 2px 10px 0px #888;
+  
 }
 .card-body {
   flex: 1 1 auto;
   min-height: 1px;
   /* padding: 1rem; */
   background: white;
-  box-shadow: 0px 2px 10px 0px #888;
+  /* box-shadow: 0px 2px 10px 0px #888; */
   border-radius: inherit;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  /* box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; */
 }
 #__BVID__33__BV_file_outer_ > label{
   padding: 45px !important;
@@ -428,6 +541,10 @@ div.custom-file-input {
 .fa-smile{
   color: green;
     font-size: 18px;
+}
+p {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 </style>
 

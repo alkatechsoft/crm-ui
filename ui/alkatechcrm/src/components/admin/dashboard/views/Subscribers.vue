@@ -28,7 +28,7 @@
          
 <b-form-group>
 <!-- <b-button size="sm" @click="selectAllRows">Select all</b-button> -->
-<b-form-checkbox @change="selectAllRows">All</b-form-checkbox> 
+<b-form-checkbox @change="selectAllRows">All</b-form-checkbox>
 </b-form-group>
       </b-col>
       <b-col>
@@ -253,6 +253,17 @@ import axios from 'axios';
           responseData.data.response_body.map((data) => this.templateFiles.push({ value: data.id, text: data.title }));
           console.log(responseData)
         })
+   this.axios.post('http://localhost:8080/lcrm-api/count-client-by-category').then((response)=>{
+         if(response.data.response_code === 200){
+          console.log('count-client-by-category', response.data.response_body);
+         }else{
+           this.category.push({ value: null, label: ' 👀 No Category Found' })
+          }
+        }).catch(function (error){
+        console.log( error);
+      });
+
+
     },
     methods: {
       onGroupCreate(){
