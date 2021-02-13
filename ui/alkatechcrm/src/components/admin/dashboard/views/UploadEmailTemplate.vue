@@ -15,7 +15,7 @@
               <!-- <div class="input-container"> -->
                  <b-form-select v-model="selected" :options="category"></b-form-select>
                  
-                 <!-- <div class="mt-3">Selected: <strong>{{ selected }}</strong></div> -->
+                 <div class="mt-3">Selected: <strong>{{ selected }}</strong></div>
                  <!-- </div> --> 
           </b-form-group>
           <ValidationProvider name="title" rules="required" v-slot="{ errors }">
@@ -169,7 +169,7 @@ import axios from 'axios';
         this.fileName = false;
         formData.append("title", this.title);
         formData.append("categories", this.selected);
-        console.log('mmmmm',formData)
+        console.log('mmmmm',formData, this.selected)
         this.axios.post('http://localhost:8080/lcrm-api/mtk-register-mail-template-file', formData).then((response)=>{
            console.log('responce : ',response.data.response_code)
          if(response.data.response_code === 200){

@@ -1,59 +1,87 @@
 <template>
-  <b-container fluid class="mt-0">
+  <b-container fluid class="mt-4">
+    <b-card class="card-style">
     <b-row>
-      <b-col>
-        <b-card>
+      <b-col lg="4">
           <b-card-body>
-            <b-form-group>
+            <b-list-group>
+            <b-list-group-item class="d-flex justify-content-between align-items-center">
+              <b>Passed Records</b> 
+              <b-badge variant="primary" pill>{{this.Passed_Records}}</b-badge>
+            </b-list-group-item>
+            <b-list-group-item class="d-flex justify-content-between align-items-center">
+              <b>Faild Records</b>
+              <b-badge variant="primary" pill>{{this.Failed_Records}}</b-badge>
+            </b-list-group-item>
+            </b-list-group>
+          </b-card-body>
+      </b-col>
+      <b-col lg="8">
+       
+    <b-card-body>
+      
+     <!-- <b-form inline>
+     -->
+       <b-row>
+      
+    <b-col lg ="10">
+  <b-form-group >
              <b-alert
                 show
-                class="elementToFadeInAndOut mt-2"
-                variant="success"
-                v-if="true"
-              >
-              <p style="text-align:left;"><b>Support Formate :</b>.csv,.xls,.xlsx </p>
-              <p style="text-align:left"><b>Sheet Formate:</b> email, username</p>
-                
-                </b-alert>
-            </b-form-group>
-            <b-form-group>
-            <v-select 
-              v-model="selectCategory"
-              placeholder="seclect"
-              size="sm"
-              :options="category"
-              :filterable="true"
-              :multiple="true"
-              :taggable="true"
-              :create-option="option => ({value: option.toLowerCase(), label: option})">
-            </v-select>
-            <!-- <b-form-select v-model="selected" :options="category"></b-form-select> -->
-                 <!-- selected:   {{selectCategory}}<br> -->
-                 <!-- seletd id: {{selectCategory }} -->
-                 <!-- </div> --> 
-          </b-form-group>
-         
+                class="elementToFadeInAndOut mt-0"
+                variant="primary"
+                v-if="true">
+              <p style="text-align:left;"><b>Support Formate :</b>.csv,.xls,.xlsx <b>Sheet Formate:</b> email, username</p>
+              <!-- <p style="text-align:left"><b>Sheet Formate:</b> email, username</p> -->
+          </b-alert>
+        </b-form-group>
+ 
+    </b-col>
+    <b-col lg="2">
+   <b-form-group >
+            <a href="C:/Users/Alka-Tech-110/Documents/GitHub/crm-ui/ui/alkatechcrm/src/assets/demo.csv" class="btn" size="sm"  variant="info" download>demo filess</a>
+    </b-form-group>
 
-            <i class="fa fa-upload upload" aria-hidden="true" v-b-popover.hover.top="'Support Formate .csv/.xls/.xlsx Sheet Formate: email, username'" title="File" ></i>
-            <b-form-group>
-              <!-- <input name="upload_excel" type="file" @change="onFileSelected" /> -->
+    </b-col>
+  </b-row>
+<b-row>
+ <b-col> 
 
-              <b-form-file
-                class="opacity_0"
-                id="s-input-file"
-                @change="onFileSelected"
-                placeholder="Choose a file or drop it here..."
-                drop-placeholder="Drop file here..."
-                accept=".csv,.xlsx"
-                :disabled="busy"
-              >
-              
-              </b-form-file>
-              <div>
-                
-                <!-- <b-alert v-if="fileFormateError" variant="primary"><a href="#" class="alert-link">{{this.selectedFile.name}}</a></b-alert> -->
-              </div>
-                <b-alert
+    <b-form-group >
+      <v-select class="style-chooser"
+        v-model="selectCategory"
+        placeholder="seclect"
+        size="lg" 
+        :options="category"
+        :filterable="true"
+        :multiple="true"
+        :taggable="true"
+        :create-option="option => ({value: option.toLowerCase(), label: option})" 
+        
+        >
+        
+      </v-select>
+      
+    </b-form-group>
+ </b-col>
+ <b-col>
+   
+  <b-form-file
+    id="s-input-file"
+    @change="onFileSelected"
+    placeholder="Choose a file "
+    drop-placeholder="Drop file here..."
+    accept=".csv,.xlsx"
+    :disabled="busy"
+    size=""
+  >
+  </b-form-file>
+ </b-col>   
+</b-row>
+ 
+
+ <b-form-group>
+          <b-alert
                 show
                 class="elementToFadeInAndOut mt-2"
                 variant="success"
@@ -91,13 +119,13 @@
                   >{{ this.selectedFile.name }}</span
                 ></b-alert
               >
-              <b-badge
+              <!-- <b-badge
                 variant="success"
                 style="padding: 5px 5px"
                 class="mt-2"
                 v-if="fileName"
                 ><b>File :</b> {{ this.selectedFile.name }}</b-badge
-              >
+              > -->
               <!-- <b-alert show variant="secondary">{{this.selectedFile.name}}</b-alert> -->
               <b-overlay
                 :show="busy"
@@ -154,7 +182,7 @@
                 </template>
               </b-overlay>
             </b-form-group>
-            <b-form-group size="lg" class="mt-2">
+            <b-form-group class="mt-0">
               <b-button
                 variant="primary"
                 class="btn-block ripple"
@@ -163,35 +191,18 @@
                 >Upload</b-button
               >
             </b-form-group>
-          </b-card-body>
-        </b-card>
-      </b-col>
-      <b-col>
-        <b-card>
-          <b-card-body>
-            <b-list-group>
-            <b-list-group-item class="d-flex justify-content-between align-items-center">
-              Passed Records 
-              <b-badge variant="primary" pill>{{this.Passed_Records}}</b-badge>
-            </b-list-group-item>
+            <!-- <b-col lg="12"><b-button  class="btn-block ripple ">Small Button</b-button></b-col> -->
 
-            <b-list-group-item class="d-flex justify-content-between align-items-center">
-              Faild Records
-              <b-badge variant="primary" pill>{{this.Failed_Records}}</b-badge>
-
-            </b-list-group-item>
-            <b-list-group-item class="d-flex justify-content-between align-items-center">
-              <!-- Excluded Records  {{this.excludedData}} -->
-            </b-list-group-item>
-            </b-list-group>
-          </b-card-body>
-        </b-card>
+    <!-- </b-form> -->
+  </b-card-body>
+         
       </b-col>
+
       </b-row>
-      <b-row class="mt-4">
+      <b-row class="" v-if="showExcludedData">
       <b-col>
           
-        <b-card>
+        <b-card-body class="custom-scroll mt-2">
            <b-alert
                 show
                 class="elementToFadeInAndOut mt-2"
@@ -202,12 +213,14 @@
                   ><i class="fa fa-frown mr-2" /> Excluded Data ( Either they have duplcate or missing )
                 </span></b-alert
               >
-        <b-card-body>
-             <b-table striped hover :items="excludedData" :fields="fields"></b-table>
+             <b-table striped hover :items="excludedData" :fields="fields" ></b-table>
        </b-card-body>
-        </b-card>
+         
       </b-col>
     </b-row>
+    </b-card>
+
+      
   </b-container>
 </template>
 
@@ -228,6 +241,7 @@ export default {
     return {
        fields: [],
       excludedData: [],
+      showExcludedData:false,
       selectedFile: null,
       selectCategory:null,
       selectedCategoryData:[{value:'avc',label:'hjhj'}],
@@ -329,6 +343,11 @@ export default {
                 this.processing = false;
                 this.isUploaded=true
                 let errors = response.data.response_description.Excluded_Records;
+                if(errors.length===0){
+                  this.showExcludedData=false
+                }else{
+                  this.showExcludedData=true
+                }
                this.Passed_Records =  response.data.response_description.Passed_Records;
                this.Failed_Records =  response.data.response_description.Failed_Records;
               let getErrorData = Object.keys(errors).map((field) => {
@@ -351,7 +370,6 @@ export default {
 
 
                  this.excludedData.push(response.data.response_description.Excluded_Records);
-alert(this.excludedData)
                 }else{
                 this.isUploadedError=response.data.response_message
                 this.fileName=false
@@ -394,28 +412,13 @@ alert(this.excludedData)
 };
 </script>
 <style scoped>
-.opacity_0 {
-  opacity: 0;
-  cursor: pointer !important;
-  right: 0%;
-  top: 55%;
-  position: absolute;
-}
-#s-input-file__BV_file_outer_>label {
-    padding: 46px !important;
-}
  
-.custom-file-label {
-  cursor: pointer !important;
-}
-.upload {
-  font-size: 25px;
-  color: #fff;
-  cursor: pointer;
-  background: #3e3ebb;
-  padding: inherit;
-  border-radius: 100%;
-  box-shadow: 0px 1px 16px 0px #859294;
+ .vs__search, .vs__search:focus{
+   font-size: 30px !important;
+ }
+.card-style {
+  top: 10%;
+  
 }
 .card {
   border: 0px solid rgba(0, 0, 0, 0.125);
@@ -430,7 +433,7 @@ alert(this.excludedData)
   background: white;
   /* box-shadow: 0px 2px 10px 0px #888; */
   border-radius: inherit;
-  /* box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 #__BVID__33__BV_file_outer_ > label{
   padding: 45px !important;
@@ -546,6 +549,10 @@ p {
     margin-top: 0;
     margin-bottom: 0;
 }
+/* #vs1__combobox{
+  padding: 4px 3px !important;
+} */
+ 
 </style>
 
 
