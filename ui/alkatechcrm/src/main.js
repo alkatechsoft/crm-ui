@@ -35,7 +35,9 @@ Vue.component("v-select", vSelect);
 
 import VueRouter from 'vue-router'
 import Subscribers from './components/admin/dashboard/views/Subscribers'
-import BulkRegistration from './components/admin/dashboard/views/BulkRegistration'
+import ImportSubscriber from './components/admin/dashboard/views/ImportSubscriber'
+import ViewSubscriberByType from './components/admin/dashboard/views/ViewSubscriberByType'
+import Subscribersbackup from './components/admin/dashboard/views/Subscribersbackup'
 import UploadEmailTemplate from './components/admin/dashboard/views/UploadEmailTemplate'
 import Groups from './components/admin/dashboard/views/Groups'
 import Login from './components/admin/Login'
@@ -91,9 +93,19 @@ const routes=[
     component:Subscribers
   },
   {
-    name:'bulk-register',
-    path:'/bulk-register', 
-    component:BulkRegistration
+    name:'ViewSubscriberByType',
+    path: '/subscribers/:id', 
+    component: ViewSubscriberByType
+  },
+  {
+    name:'import-subscriber',
+    path:'/import-subscriber', 
+    component:ImportSubscriber
+  },
+  {
+    name:'Subscribersbackup',
+    path:'/Subscribersbackup', 
+    component:Subscribersbackup
   },
   {
     name:'email-temp',

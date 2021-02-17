@@ -2,7 +2,7 @@
   <b-container fluid class="mt-2">
     <!-- User Interface controls -->
     <b-card>
-    <b-row style="background:#ebebeb; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; margin-bottom:1rem" class="pt-3">
+    <b-row style="background:#ebebeb;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; margin-bottom:1rem" class="pt-3">
       <!-- <b-col>
  <b-form-group
       label="Select Type:"
@@ -26,16 +26,26 @@
       </b-col>
       <b-col>
          
- 
+<b-form-group>
+<!-- <b-button size="sm" @click="selectAllRows">Select all</b-button> -->
+<b-form-checkbox @change="selectAllRows">All</b-form-checkbox>
+</b-form-group>
       </b-col>
-  
+      <b-col>
+         <b-form-input
+              id="filter-input"
+              v-model="groupTitle"
+              type="text"
+              placeholder="Subscriber Type"
+            ></b-form-input>
+      </b-col>
        <b-col>
          <b-button
               id="create-group"
               variant="primary"
               type="button"
               @click="onGroupCreate"
-            >Assign</b-button>
+            >Create Campaign</b-button>
       </b-col>
     </b-row>
     <b-row>
@@ -100,40 +110,34 @@
       small
       @filtered="onFiltered"
       :select-mode="selectMode"
-      selectable
       responsive="sm"
       ref="selectableTable"
+      selectable
       @row-selected="onRowSelected"
       :tbody-transition-props="transProps"
       id="table-transition-example"
     >
-    <template #cell(html)="">
-        <span v-html="data.value"></span>
-                    <b-nav-item to="subscribers" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Subscribers </b-nav-item>
-
-      <b-button size="sm">
-       Delete
-    </b-button>
-      </template>
+    
       <template #cell(name)="row">
         {{ row.value.first }} {{ row.value.last }}
       </template>
-  <template #cell(actions)="row"  >  
-    <b-button-group >
-          <b-button :to="'/subscribers/'+row.item.id" class="btn" variant="primary">View</b-button>
-
-          <b-button class="btn ripple" variant="success">email now</b-button>
-   
-          <b-button switch size="">active</b-button>    
-    
-    </b-button-group>
+  <template #cell(actions)="">  
+    <b-button size="sm">
+       Update
+    </b-button> <b-button size="sm">
+       Delete
+    </b-button>
   </template>
   
-      <template #cell(status)="">
-      <b-button-group>
-            <b-form-checkbox switch>active</b-form-checkbox>     
-     </b-button-group>
-      </template> 
+      <!-- <template #cell(actions)="row">
+         <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
+          Info modal
+        </b-button> -->
+        <!-- <b-button size="sm" @click="row.toggleDetails">
+          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+        </b-button> 
+         
+      </template>  -->
 
       <template #row-details="row">
         <b-card>
@@ -154,7 +158,10 @@
         </template>
       </template>
     </b-table>
-      <p>
+    <!-- <p>
+          <b-button size="sm" @click="clearSelected">Clear selected</b-button>
+    </p> -->
+    <p>
       Selected Rows:<br>
       {{ selected }}
       selected template:<br>
@@ -197,13 +204,14 @@ import axios from 'axios';
         ],
         templateSelected:null,
         modes: ['multi', 'single', 'range'],
-        items: [],
-          fields: [
-          { key: 'subscriberType', label: 'Subscriber Type', sortable: false, sortDirection: 'desc' },
-          // { key: 'html', label: 'Actions' },
-          {key: 'actions', label: 'actions'}
-         ],
-        selectMode: 'single',
+         items: [],
+        fields: [
+          { key: 'username', label: 'Name', sortable: false, sortDirection: 'desc' },
+          { key: 'email', label: 'Email', sortable: false, sortDirection: 'desc' },
+          { key: 'contact', label: 'Contact', sortable: false, sortDirection: 'desc' },
+          { key: 'actions', label: 'Actions' }
+        ],
+        selectMode: 'multi',
         selected: [],
         selectedUsersID:[],
         totalRows: 1,
@@ -237,9 +245,9 @@ import axios from 'axios';
         console.log(localStorage.getItem('token'))
         this.axios.post('http://localhost:8080/lcrm-api/list-client').then((response)=>{
         console.log(response);
-        // this.items=response.data.response_body;
-        // console.log(this.items)
-        // this.totalRows = this.items.length
+        this.items=response.data.response_body;
+        console.log(this.items)
+        this.totalRows = this.items.length
         })
         this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template').then((responseData)=>{
           responseData.data.response_body.map((data) => this.templateFiles.push({ value: data.id, text: data.title }));
@@ -248,10 +256,6 @@ import axios from 'axios';
    this.axios.post('http://localhost:8080/lcrm-api/count-client-by-category').then((response)=>{
          if(response.data.response_code === 200){
           console.log('count-client-by-category', response.data.response_body);
-    
-          response.data.response_body.map((data) => this.items.push({subscriberType: data.subscriberType, count:data.count, id:data.id, userArray:data.userArray, actions:''}));
-          console.log("itemssssssssss",this.items)
-        this.totalRows = this.items.length
          }else{
            this.category.push({ value: null, label: ' 👀 No Category Found' })
           }
@@ -322,35 +326,6 @@ import axios from 'axios';
     border-radius: inherit;
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
 }
-.ripple {
-  position: relative;
-  overflow: hidden;
-  transform: translate3d(0, 0, 0);
-}
-
-.ripple:after {
-  content: "";
-  display: block;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
-  background-repeat: no-repeat;
-  background-position: 50%;
-  transform: scale(10, 10);
-  opacity: 0;
-  transition: transform 0.5s, opacity 1s;
-}
-
-.ripple:active:after {
-  transform: scale(0, 0);
-  opacity: 0.3;
-  transition: 0s;
-}
-
 </style> 
 
  

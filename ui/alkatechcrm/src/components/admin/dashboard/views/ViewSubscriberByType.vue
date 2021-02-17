@@ -2,42 +2,44 @@
   <b-container fluid class="mt-2">
     <!-- User Interface controls -->
     <b-card>
-    <b-row style="background:#ebebeb; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; margin-bottom:1rem" class="pt-3">
-      <!-- <b-col>
- <b-form-group
-      label="Select Type:"
-      label-for="table-select-mode-select"
-      label-cols-lg="2"
-      label-cols-md="6"
-      label-cols-sm="6"
-    >
-      <b-form-select
-        id="table-select-mode-select"
-        v-model="selectMode"
-        :options="modes"
-        class="mb-0"
-      ></b-form-select>
-    </b-form-group>
-      </b-col> -->
-      <b-col>
-        <b-form-group id="input-group-1" label-for="input-1">
-              <b-form-select v-model="templateSelected" :options="templateFiles"></b-form-select>
-        </b-form-group>
+    <!-- <b-row style="background:rgb(132 191 255 / 75%);; margin-bottom:1rem; box-shadow:rgb(51 10 117) 0px 0px 3px 1px; border-radius: inherit;" class="pt-1">
+   
+      <b-col  offset-lg="0"
+          offset-md="3"
+          offset-sm="3"
+          lg="3"
+          md="6"
+          sm="6"
+          offset="1"
+          cols="6">
+        <h4><b>Subscriber Type :</b>  Doctors</h4>
       </b-col>
-      <b-col>
-         
+        <b-col  offset-lg="7"
+          offset-md="3"
+          offset-sm="3"
+          lg="2"
+          md="6"
+          sm="6"
+          offset="1"
+          cols="6">
+        <b-button class="pt-0" :to="'/subscribers/'" variant="primary"> <i class="fa fa-arrow-left " aria-hidden="true"> &nbsp; Back</i></b-button>
+      </b-col>
  
-      </b-col>
-  
-       <b-col>
-         <b-button
-              id="create-group"
-              variant="primary"
-              type="button"
-              @click="onGroupCreate"
-            >Assign</b-button>
-      </b-col>
-    </b-row>
+    </b-row> -->
+
+
+  <b-navbar class="s-nav-bg" toggleable="sm" type="dark" variant="i nfo" style="height:40px; background:rgb(132 191 255 / 75%);; margin-bottom:1rem; box-shadow:rgb(51 10 117) 0px 0px 3px 1px; border-radius: inherit;" >
+        <!-- <b-navbar-brand href="#">ALKATECH-CRM</b-navbar-brand> -->
+        <h6><b>Subscriber Type :</b>  Doctors</h6>
+        <!-- Right aligned nav items -->
+        <b-navbar-nav class="ml-auto">
+        <b-button class= "" :to="'/subscribers/'" variant="primary" style="    margin-right: -15px;"> <i class="fa fa-arrow-left " aria-hidden="true"> &nbsp; Back</i></b-button>
+
+        </b-navbar-nav>
+       
+    </b-navbar>
+
+
     <b-row>
       <b-col  offset-lg="" lg="2" offset-md="0" md="5" sm="4"  class="my-1">
         <b-form-group
@@ -100,41 +102,24 @@
       small
       @filtered="onFiltered"
       :select-mode="selectMode"
-      selectable
       responsive="sm"
       ref="selectableTable"
       @row-selected="onRowSelected"
       :tbody-transition-props="transProps"
       id="table-transition-example"
     >
-    <template #cell(html)="">
-        <span v-html="data.value"></span>
-                    <b-nav-item to="subscribers" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Subscribers </b-nav-item>
-
-      <b-button size="sm">
-       Delete
-    </b-button>
-      </template>
+    
       <template #cell(name)="row">
         {{ row.value.first }} {{ row.value.last }}
       </template>
-  <template #cell(actions)="row"  >  
-    <b-button-group >
-          <b-button :to="'/subscribers/'+row.item.id" class="btn" variant="primary">View</b-button>
-
-          <b-button class="btn ripple" variant="success">email now</b-button>
-   
-          <b-button switch size="">active</b-button>    
-    
-    </b-button-group>
+  <template #cell(actions)="">  
+    <b-button size="sm">
+       Update
+    </b-button> <b-button size="sm">
+       Delete
+    </b-button>
   </template>
-  
-      <template #cell(status)="">
-      <b-button-group>
-            <b-form-checkbox switch>active</b-form-checkbox>     
-     </b-button-group>
-      </template> 
-
+   
       <template #row-details="row">
         <b-card>
           <ul>
@@ -154,14 +139,7 @@
         </template>
       </template>
     </b-table>
-      <p>
-      Selected Rows:<br>
-      {{ selected }}
-      selected template:<br>
-      {{templateSelected}}
-      group title: <br>
-      {{groupTitle}}
-    </p>
+  
      <b-row>
       <b-col sm="7" md="3" lg="2" class="my-1">
         <b-pagination
@@ -175,10 +153,7 @@
         
       </b-col>
     </b-row>
-    <!-- Info modal -->
-    <!-- <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-      <pre>{{ infoModal.content }}</pre>
-    </b-modal> -->
+   
     </b-card>
   </b-container>
 </template>
@@ -197,13 +172,14 @@ import axios from 'axios';
         ],
         templateSelected:null,
         modes: ['multi', 'single', 'range'],
-        items: [],
-          fields: [
-          { key: 'subscriberType', label: 'Subscriber Type', sortable: false, sortDirection: 'desc' },
-          // { key: 'html', label: 'Actions' },
-          {key: 'actions', label: 'actions'}
-         ],
-        selectMode: 'single',
+         items: [],
+        fields: [
+          { key: 'username', label: 'Name', sortable: false, sortDirection: 'desc' },
+          { key: 'email', label: 'Email', sortable: false, sortDirection: 'desc' },
+          { key: 'contact', label: 'Contact', sortable: false, sortDirection: 'desc' },
+          { key: 'actions', label: 'Actions' }
+        ],
+        selectMode: 'multi',
         selected: [],
         selectedUsersID:[],
         totalRows: 1,
@@ -235,11 +211,13 @@ import axios from 'axios';
     mounted() {
       // Set the initial number of items
         console.log(localStorage.getItem('token'))
-        this.axios.post('http://localhost:8080/lcrm-api/list-client').then((response)=>{
+        this.axios.post('http://localhost:8080/lcrm-api/list-client-by-category',
+        {category_id:this.$route.params.id}
+        ).then((response)=>{
         console.log(response);
-        // this.items=response.data.response_body;
-        // console.log(this.items)
-        // this.totalRows = this.items.length
+        this.items=response.data.response_body;
+        console.log(this.items)
+        this.totalRows = this.items.length
         })
         this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template').then((responseData)=>{
           responseData.data.response_body.map((data) => this.templateFiles.push({ value: data.id, text: data.title }));
@@ -248,10 +226,6 @@ import axios from 'axios';
    this.axios.post('http://localhost:8080/lcrm-api/count-client-by-category').then((response)=>{
          if(response.data.response_code === 200){
           console.log('count-client-by-category', response.data.response_body);
-    
-          response.data.response_body.map((data) => this.items.push({subscriberType: data.subscriberType, count:data.count, id:data.id, userArray:data.userArray, actions:''}));
-          console.log("itemssssssssss",this.items)
-        this.totalRows = this.items.length
          }else{
            this.category.push({ value: null, label: ' 👀 No Category Found' })
           }
@@ -322,35 +296,6 @@ import axios from 'axios';
     border-radius: inherit;
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
 }
-.ripple {
-  position: relative;
-  overflow: hidden;
-  transform: translate3d(0, 0, 0);
-}
-
-.ripple:after {
-  content: "";
-  display: block;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
-  background-repeat: no-repeat;
-  background-position: 50%;
-  transform: scale(10, 10);
-  opacity: 0;
-  transition: transform 0.5s, opacity 1s;
-}
-
-.ripple:active:after {
-  transform: scale(0, 0);
-  opacity: 0.3;
-  transition: 0s;
-}
-
 </style> 
 
  

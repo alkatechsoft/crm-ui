@@ -2,42 +2,6 @@
   <b-container fluid class="mt-2">
     <!-- User Interface controls -->
     <b-card>
-    <b-row style="background:#ebebeb; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; margin-bottom:1rem" class="pt-3">
-      <!-- <b-col>
- <b-form-group
-      label="Select Type:"
-      label-for="table-select-mode-select"
-      label-cols-lg="2"
-      label-cols-md="6"
-      label-cols-sm="6"
-    >
-      <b-form-select
-        id="table-select-mode-select"
-        v-model="selectMode"
-        :options="modes"
-        class="mb-0"
-      ></b-form-select>
-    </b-form-group>
-      </b-col> -->
-      <b-col>
-        <b-form-group id="input-group-1" label-for="input-1">
-              <b-form-select v-model="templateSelected" :options="templateFiles"></b-form-select>
-        </b-form-group>
-      </b-col>
-      <b-col>
-         
- 
-      </b-col>
-  
-       <b-col>
-         <b-button
-              id="create-group"
-              variant="primary"
-              type="button"
-              @click="onGroupCreate"
-            >Assign</b-button>
-      </b-col>
-    </b-row>
     <b-row>
       <b-col  offset-lg="" lg="2" offset-md="0" md="5" sm="4"  class="my-1">
         <b-form-group
@@ -84,7 +48,18 @@
     </b-row>
 
     <!-- Main table element -->
-    
+     <b-form-group
+      label="Selection mode:"
+      label-for="table-select-mode-select"
+      label-cols-md="4"
+    >
+      <b-form-select
+        id="table-select-mode-select"
+        v-model="selectMode"
+        :options="modes"
+        class="mb-3"
+      ></b-form-select>
+    </b-form-group>
     <b-table
       :items="items"
       :fields="fields"
@@ -100,40 +75,34 @@
       small
       @filtered="onFiltered"
       :select-mode="selectMode"
-      selectable
       responsive="sm"
       ref="selectableTable"
+      selectable
       @row-selected="onRowSelected"
       :tbody-transition-props="transProps"
-      id="table-transition-example"
+        id="table-transition-example"
     >
-    <template #cell(html)="">
-        <span v-html="data.value"></span>
-                    <b-nav-item to="subscribers" @click="hide"><i class="fa fa-address-card" /> &nbsp; &nbsp; Subscribers </b-nav-item>
-
-      <b-button size="sm">
-       Delete
-    </b-button>
-      </template>
+    
       <template #cell(name)="row">
         {{ row.value.first }} {{ row.value.last }}
       </template>
-  <template #cell(actions)="row"  >  
-    <b-button-group >
-          <b-button :to="'/subscribers/'+row.item.id" class="btn" variant="primary">View</b-button>
-
-          <b-button class="btn ripple" variant="success">email now</b-button>
-   
-          <b-button switch size="">active</b-button>    
-    
-    </b-button-group>
+  <template #cell(actions)="">  
+    <b-button size="sm">
+       Update
+    </b-button> <b-button size="sm">
+       Delete
+    </b-button>
   </template>
   
-      <template #cell(status)="">
-      <b-button-group>
-            <b-form-checkbox switch>active</b-form-checkbox>     
-     </b-button-group>
-      </template> 
+      <!-- <template #cell(actions)="row">
+         <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
+          Info modal
+        </b-button> -->
+        <!-- <b-button size="sm" @click="row.toggleDetails">
+          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+        </b-button> 
+         
+      </template>  -->
 
       <template #row-details="row">
         <b-card>
@@ -154,13 +123,15 @@
         </template>
       </template>
     </b-table>
-      <p>
+    <p>
+      <b-button size="sm" @click="selectAllRows">Select all</b-button>
+      <b-button size="sm" @click="clearSelected">Clear selected</b-button>
+      <b-button size="sm" @click="selectThirdRow">Select 3rd row</b-button>
+      <b-button size="sm" @click="unselectThirdRow">Unselect 3rd row</b-button>
+    </p>
+    <p>
       Selected Rows:<br>
       {{ selected }}
-      selected template:<br>
-      {{templateSelected}}
-      group title: <br>
-      {{groupTitle}}
     </p>
      <b-row>
       <b-col sm="7" md="3" lg="2" class="my-1">
@@ -191,21 +162,16 @@ import axios from 'axios';
     data() {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token'); 
       return {
-        groupTitle:null,
-        templateFiles:[
-           { value: null, text: 'Asign Template' }
-        ],
-        templateSelected:null,
         modes: ['multi', 'single', 'range'],
-        items: [],
-          fields: [
-          { key: 'subscriberType', label: 'Subscriber Type', sortable: false, sortDirection: 'desc' },
-          // { key: 'html', label: 'Actions' },
-          {key: 'actions', label: 'actions'}
-         ],
-        selectMode: 'single',
+         items: [],
+        fields: [
+          { key: 'username', label: 'Name', sortable: false, sortDirection: 'desc' },
+          { key: 'email', label: 'Email', sortable: false, sortDirection: 'desc' },
+          { key: 'contact', label: 'Contact', sortable: false, sortDirection: 'desc' },
+          { key: 'actions', label: 'Actions' }
+        ],
+        selectMode: 'multi',
         selected: [],
-        selectedUsersID:[],
         totalRows: 1,
         currentPage: 1,
         perPage: 5,
@@ -234,53 +200,15 @@ import axios from 'axios';
     },
     mounted() {
       // Set the initial number of items
-        console.log(localStorage.getItem('token'))
+      console.log(localStorage.getItem('token'))
         this.axios.post('http://localhost:8080/lcrm-api/list-client').then((response)=>{
         console.log(response);
-        // this.items=response.data.response_body;
-        // console.log(this.items)
-        // this.totalRows = this.items.length
+        this.items=response.data.response_body;
+        console.log(this.items)
+      this.totalRows = this.items.length
         })
-        this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template').then((responseData)=>{
-          responseData.data.response_body.map((data) => this.templateFiles.push({ value: data.id, text: data.title }));
-          console.log(responseData)
-        })
-   this.axios.post('http://localhost:8080/lcrm-api/count-client-by-category').then((response)=>{
-         if(response.data.response_code === 200){
-          console.log('count-client-by-category', response.data.response_body);
-    
-          response.data.response_body.map((data) => this.items.push({subscriberType: data.subscriberType, count:data.count, id:data.id, userArray:data.userArray, actions:''}));
-          console.log("itemssssssssss",this.items)
-        this.totalRows = this.items.length
-         }else{
-           this.category.push({ value: null, label: ' 👀 No Category Found' })
-          }
-        }).catch(function (error){
-        console.log( error);
-      });
-
-
     },
     methods: {
-      onGroupCreate(){
-         console.log('groupData', this.selected)
-         this.selected.map((data) => this.selectedUsersID.push(data.id));
-         console.log('users::::', this.selectedUsersID, this.groupTitle, this.templateSelected)
-         let createGroupData = {
-           users:this.selectedUsersID,
-           title:this.groupTitle,
-           template:this.templateSelected
-         }
-         console.log('dataaaaaaaa:::::::::', createGroupData)
-         this.axios.post('http://localhost:8080/lcrm-api/mtk-register-alot-user-to-template', createGroupData).then((response)=>{
-           console.log('responce : ',response.data.response_code)
-         if(response.data.response_code === 200){
-            this.isUploaded=true
-            this.isUploadedError=false;
-            this.title=''
-         }
-         })
-      },
       info(item, index, button) {
         this.infoModal.title = `Row index: ${index}`
         this.infoModal.content = JSON.stringify(item, null, 2)
@@ -305,6 +233,14 @@ import axios from 'axios';
       clearSelected() {
         this.$refs.selectableTable.clearSelected()
       },
+      selectThirdRow() {
+        // Rows are indexed from 0, so the third row is index 2
+        this.$refs.selectableTable.selectRow(2)
+      },
+      unselectThirdRow() {
+        // Rows are indexed from 0, so the third row is index 2
+        this.$refs.selectableTable.unselectRow(2)
+      }
     }
   }
 </script>
@@ -322,35 +258,6 @@ import axios from 'axios';
     border-radius: inherit;
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
 }
-.ripple {
-  position: relative;
-  overflow: hidden;
-  transform: translate3d(0, 0, 0);
-}
-
-.ripple:after {
-  content: "";
-  display: block;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
-  background-repeat: no-repeat;
-  background-position: 50%;
-  transform: scale(10, 10);
-  opacity: 0;
-  transition: transform 0.5s, opacity 1s;
-}
-
-.ripple:active:after {
-  transform: scale(0, 0);
-  opacity: 0.3;
-  transition: 0s;
-}
-
 </style> 
 
  

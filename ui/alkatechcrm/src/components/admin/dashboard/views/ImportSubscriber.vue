@@ -24,25 +24,34 @@
      -->
        <b-row>
       
-    <b-col lg ="10">
-  <b-form-group >
+<b-col lg ="12">
+<b-list-group>
+  <b-list-group-item variant="info" class="d-flex justify-content-between align-items-center mb-2">
+    <p style="text-align:left;"><b>Support Formate :</b>.csv,.xlsx <b>Sheet Formate:</b> email, fullname</p>
+    <b-badge variant="info"  >
+      <a style="color:white; text-decoration:none" href="./files/clients.xlsx" download class="p-3" size="lg"  variant="info" >
+      <!-- <a style="color:white; text-decoration:none" href="./../../../../files/demo.csv" download class="p-3" size="lg"  variant="info" > -->
+      <i class="fa fa-download" /> &nbsp;
+      demo files</a>
+    </b-badge>
+  </b-list-group-item>
+</b-list-group>
+  <!-- <b-form-group >
              <b-alert
                 show
                 class="elementToFadeInAndOut mt-0"
                 variant="primary"
                 v-if="true">
               <p style="text-align:left;"><b>Support Formate :</b>.csv,.xls,.xlsx <b>Sheet Formate:</b> email, username</p>
-              <!-- <p style="text-align:left"><b>Sheet Formate:</b> email, username</p> -->
-          </b-alert>
-        </b-form-group>
- 
+           </b-alert>
+        </b-form-group> -->
     </b-col>
-    <b-col lg="2">
+    <!-- <b-col lg="2">
    <b-form-group >
             <a href="C:/Users/Alka-Tech-110/Documents/GitHub/crm-ui/ui/alkatechcrm/src/assets/demo.csv" class="btn" size="sm"  variant="info" download>demo filess</a>
     </b-form-group>
 
-    </b-col>
+    </b-col> -->
   </b-row>
 <b-row>
  <b-col> 
@@ -210,12 +219,11 @@
                 v-if="1"
               >
                 <span variant="danger" class="text-float"
-                  ><i class="fa fa-frown mr-2" /> Excluded Data ( Either they have duplcate or missing )
+                  ><i class="fa fa-frown mr-2" /> Excluded Data ( Either they are duplicate or missing required field)
                 </span></b-alert
               >
              <b-table striped hover :items="excludedData" :fields="fields" ></b-table>
        </b-card-body>
-         
       </b-col>
     </b-row>
     </b-card>
