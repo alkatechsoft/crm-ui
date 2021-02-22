@@ -38,7 +38,10 @@ import Subscribers from './components/admin/dashboard/views/Subscribers'
 import ImportSubscriber from './components/admin/dashboard/views/ImportSubscriber'
 import ViewSubscriberByType from './components/admin/dashboard/views/ViewSubscriberByType'
 import Subscribersbackup from './components/admin/dashboard/views/Subscribersbackup'
+import UpdateEmailTemplate from './components/admin/dashboard/views/UpdateEmailTemplate'
 import UploadEmailTemplate from './components/admin/dashboard/views/UploadEmailTemplate'
+import ManageTemplate from './components/admin/dashboard/views/template/ManageTemplate'
+import Week from './components/admin/dashboard/views/Week'
 import Groups from './components/admin/dashboard/views/Groups'
 import Login from './components/admin/Login'
 
@@ -82,6 +85,11 @@ const routes=[
     path:'/admin', 
     component:Login
   },
+  {
+    name:'week',
+    path:'/week', 
+    component:Week
+  },
   // {
   //   name:'dashboard',
   //   path:'/', 
@@ -93,14 +101,14 @@ const routes=[
     component:Subscribers
   },
   {
-    name:'ViewSubscriberByType',
-    path: '/subscribers/:id', 
-    component: ViewSubscriberByType
-  },
-  {
     name:'import-subscriber',
     path:'/import-subscriber', 
     component:ImportSubscriber
+  },
+  {
+    name:'ViewSubscriberByType',
+    path: '/subscribers/:id/:categoryName',
+    component: ViewSubscriberByType
   },
   {
     name:'Subscribersbackup',
@@ -108,9 +116,19 @@ const routes=[
     component:Subscribersbackup
   },
   {
-    name:'email-temp',
-    path:'/email-temp', 
+    name:'email-temp-update',
+    path:'/email-temp/update', 
+    component:UpdateEmailTemplate
+  },
+  {
+    name:'email-temp-new',
+    path:'/email-temp/new', 
     component:UploadEmailTemplate
+  },
+  {
+    name:'manageTemplate',
+    path:'/manage-temp', 
+    component:ManageTemplate
   },
   {
     name:'groups',

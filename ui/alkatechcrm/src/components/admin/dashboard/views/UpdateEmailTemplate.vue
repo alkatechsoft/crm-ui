@@ -1,38 +1,32 @@
 <template>
     <div>
         <b-container fluid class="mt-4">
-            <b-row v-if="!togetEditor ">
-                <b-col>
-                    <b-card>
-                        <!-- partial:index.partial.html -->
-                        <div v-if="!file" >
-                            <div :class="['dropZone', dragging ? 'dropZone-over' : '']" @dragenter="dragging = true" @dragleave="dragging = false">
-                                <div class="dropZone-info" @change="onFileSelected">
-                                    <span class="fa fa-cloud-upload dropZone-title"></span>
-                                    <span class="dropZone-title">Drop file or click to upload</span>
-                                    <div class="dropZone-upload-limit-info">
-                                        <div>extension support: txt/html</div>
-                                        <div>maximum file size: 5 MB</div>
-                                    </div>
-                                </div>
-                                <input type="file" ref="myFile" @change="onFileSelected">
-                            </div>
-                        </div>
-                        <div v-else class="dropZone-uploaded">
-                            <div class="dropZone-uploaded-info">
-                                <span class="dropZone-title">Uploaded</span> 
-                                <button type="button" class="btn btn-primary removeFile" >Remove File</button>
-                            </div>
-                        </div>
-                    </b-card>
-                </b-col>
+            <b-card>
+            <b-row >
+                   
+                     <b-col>
+                       <b-form-group>
+                           <b-form-select  @change="onChangeCategory()" v-model="selectedCategory" :options="TemplateCategory" placeholder="Filter By Category"></b-form-select>
+                       </b-form-group>
+                     </b-col>
+
+                    <b-col>
+                       <b-form-group  >
+                           <b-form-select  @change="onChangeTemplate()" v-model="selectedTemplates" :options="Templates"  placeholder="Select Template"></b-form-select>
+                       </b-form-group>
+                    </b-col>
+
             </b-row>
-            <br/>
-            <b-row v-if="togetEditor && file">
+                   </b-card>
+
+
+            <b-row  v-if="togetEditor">
                 <b-col>
                     <b-card class="bg-light ar-ckeditor">
+                        <input type="hidden" name="id" id="templateId" v-model="templateId">
                         <editor  v-model.lazy="htmlediotr"
                                 api-key="no-api-key"
+                                 readonly =true
                                 :init="{
                                             height: 1000,
                                             menubar: false,
@@ -53,7 +47,7 @@
                             <b-col>
                                 <b-form-group >
                                     <v-select class="style-chooser"
-                                              v-model="selectedCategory"
+                                              v-model="TemplateSelectedCategory"
                                               placeholder="Please select an category"
                                               size="lg"
                                               :options="TemplateCategory"
@@ -63,6 +57,8 @@
                                               :create-option="option => ({value: option.toLowerCase(), label: option})"
                                     >
                                     </v-select>
+
+
                                 </b-form-group>
                             </b-col>
                             <b-col>
@@ -81,12 +77,10 @@
                         </b-row>
                         <b-form-group  label-for="submit-template">
                             <b-button class="ripple" type="button" @click="submitTemplate()" variant="primary">
-                                Submit
-                            </b-button>
-                            <b-button class="ripple" type="button" @click="removeSelectedFile()" variant="primary">
-                                Reset
+                                Update
                             </b-button>
                         </b-form-group>
+
                     </b-card>
                 </b-col>
                
@@ -94,8 +88,10 @@
         </b-container>
     </div>
 </template>
+
 <script>
     // import Vue from 'vue'
+
     import axios from 'axios';
     import Editor from "@tinymce/tinymce-vue";
     export default {
@@ -109,77 +105,122 @@
                 htmlediotr:null,
                 templateTitle:null,
                 categories:null,
-                TemplateCategory: [],
+                templateId:null,
+                TemplateSelectedCategory:[],
+
+
+                TemplateCategory: [{ value: null, text: 'All Categories',  default:true }],
+                Templates:[{ value: null, text: 'Select a Template',default:true, disabled:true }],
+                selectedTemplates:null,
                 selectedCategory:null,
-                file:'',
+
+
+
                 togetEditor:false,
-                dragging: false
+
             }
         },
         mounted() {
             // Set the initial number of Template Category
-            this.axios.post('http://localhost:8080/lcrm-api/mtk-list-parent-category').then((response)=>{
-                if(response.data.response_code === 200){
-                    response.data.response_body.map((data) => this.TemplateCategory.push({ value: data.id, label: data.category_name }));
-                }
-            }).catch(function (error){
-                console.log( 'error',error);
-            });
+            this.fetchCategories();
+            this.fetchTemplates();
+
+
+
         },
+
         methods: {
-            onFileSelected(event) {
-                var files = event.target.files || event.dataTransfer.files;
-                if (!files.length) {
-                    this.dragging = false;
-                    return;
-                }
-                this.createFile(files[0]);
-                let file = this.$refs.myFile.files[0];
-                if(!file || file.type !== 'text/html') return;
-                let reader = new FileReader();
-                reader.readAsText(file, "UTF-8");
-                reader.onload =  evt => {
-                    this.htmlediotr = evt.target.result;
-                    this.togetEditor=true;
-                }
-                reader.onerror = evt => {
-                    console.error(evt);
-                }
+
+            fetchCategories(){
+
+                this.axios.post('http://localhost:8080/lcrm-api/mtk-list-parent-category').then((response)=>{
+                    if(response.data.response_code === 200){
+                        response.data.response_body.map((data) => this.TemplateCategory.push( { value: data.id, text: data.category_name, label: data.category_name   }));
+                    }
+
+                }).catch(function (error){
+                    console.log( 'error',error);
+                });
             },
-            createFile(file) {
-                if (!file.type.match('text.*')) {
-                    alert('please select text/html file');
-                    this.dragging = false;
-                    return;
-                }
-                if (file.size > 5000000) {
-                    alert('please check file size no over 5 MB.');
-                    this.dragging = false;
-                    return;
-                }
-                this.file = file;
-                this.dragging = false;
+
+            fetchTemplates($category_id){
+                this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template',{
+                    'category_id':$category_id,
+                }).then((response)=>{
+                    if(response.data.response_code === 200){
+                        this.Templates=[];
+                        this.Templates.push({value: null, text: 'Select a Template', default: true, disabled: true} ),
+                        response.data.response_body.map((data) => this.Templates.push( { value: data.id, text: data.title  }));
+                    }
+                }).catch(function (error){
+                    console.log( 'error',error);
+                });
             },
+
+            fetchTemplateData($templateId){
+
+                this.axios.post('http://localhost:8080/lcrm-api/mtk-single-get-template',{
+                    'id':$templateId,
+                }).then((response)=>{
+                    if(response.data.response_code === 200){
+                        this.htmlediotr=response.data.response_body[0].template
+                        this.templateTitle=response.data.response_body[0].title
+                        this.templateId=response.data.response_body[0].id
+
+                        this.axios.post('http://localhost:8080/lcrm-api/mtk-list-category-By-StringifyArray',{
+                            'categoryString':response.data.response_body[0].categories,
+                        }).then((categoryResponse)=>{
+                            if(categoryResponse.data.response_code === 200){
+                                this.TemplateSelectedCategory=[]
+                                categoryResponse.data.response_body.map((data) => this.TemplateSelectedCategory.push({ value: data.id, text: data.category_name, label: data.category_name }));
+                            }
+                        }).catch(function (error){
+                            console.log( 'error',error);
+                        });
+                    }
+
+                }).catch(function (error){
+                    console.log( 'error',error);
+                });
+            },
+
+
+            onChangeCategory(){
+
+                this.fetchTemplates(this.selectedCategory)
+
+            },
+
+            onChangeTemplate(){
+                this.togetEditor=true;
+                this.fetchTemplateData(this.selectedTemplates)
+            },
+
             removeSelectedFile() {
-                this.file = '';
-                this.togetEditor=false;
-                this.dragging=false;
                 this.htmlediotr=null;
                 this.templateTitle=null;
                 this.categories=null;
+                this.templateId=null;
+                this.TemplateSelectedCategory=[];
             },
+
             submitTemplate(){
-                if (this.selectedCategory.length>0){
+
+                if (this.TemplateSelectedCategory.length>0){
                     var category_name = [];
-                    for(var i=0; i<this.selectedCategory.length; i++){
-                        category_name[i]=this.selectedCategory[i].label
+                    for(var i=0; i<this.TemplateSelectedCategory.length; i++){
+                        category_name[i]=this.TemplateSelectedCategory[i].label
                     }
                     this.categories=category_name;
+
                 }
-                axios.post('http://localhost:8080/lcrm-api/mtk-register-mail-template-text', {
+
+                axios.post('http://localhost:8080/lcrm-api/mtk-update-sms-template', {
+                    id: this.templateId,
                     template: this.htmlediotr,
                     title: this.templateTitle,
-                    category_name: this.categories
+                    category_name: this.categories,
+
                 })
                     .then((response) =>  {
                         this.removeSelectedFile()
@@ -190,13 +231,18 @@
                         console.log(error);
                     });
             },
+
+
         }
     }
 </script>
+
 <style scoped>
+
     .card {
         border: 0px solid rgba(0, 0, 0, .125);
     }
+
     .card-body {
         flex: 1 1 auto;
         min-height: 1px;
@@ -206,12 +252,14 @@
         border-radius: inherit;
         box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
     }
+
     /*Create ripple effec*/
     .ripple {
         position: relative;
         overflow: hidden;
         transform: translate3d(0, 0, 0);
     }
+
     .ripple:after {
         content: "";
         display: block;
@@ -228,11 +276,13 @@
         opacity: 0;
         transition: transform .5s, opacity 1s;
     }
+
     .ripple:active:after {
         transform: scale(0, 0);
         opacity: .3;
         transition: 0s;
     }
+
     /* btn styles */
     .btn {
         background-color: #3e3ebb;
@@ -262,14 +312,17 @@
         0 4px 8px 0 rgba(29, 39, 231, .1),
         0 2px 15px 0 rgba(29, 39, 231, .1)
     }
+
     .btn:hover {
         background-color: #131BB4;
         border-color: #131BB4;
         color: #fff;
     }
+
     .button.btn.ripple.btn-secondary:focus {
         background: #1d27e7;
     }
+
     .icon {
         border-radius: 0.25rem 0rem 0rem 0.25rem;
         padding: 10px;
@@ -278,36 +331,45 @@
         min-width: 14%;
         text-align: center;
     }
+
     .input-container {
         text-align: left;
         display: flex;
         width: 100%;
         margin-bottom: 5px;
     }
+
     .input-field {
         width: 100%;
         padding: 10px;
         outline: none;
         border-radius: 0rem 0.25rem 0.25rem 0rem;
     }
+
     .text-float {
     }
+
     .fa-frown {
         color: red;
         font-size: 20px;
     }
+
+
     .dropZone {
         width: 100%;
         height: 200px;
         position: relative;
         border: 2px dashed #eee;
     }
+
     .dropZone:hover {
         border: 2px solid #2e94c4;
     }
+
     .dropZone:hover .dropZone-title {
         color: #1975A0;
     }
+
     .dropZone-info {
         color: #A8A8A8;
         position: absolute;
@@ -316,9 +378,11 @@
         transform: translate(0, -50%);
         text-align: center;
     }
+
     ..dropZone-title {
         color: #787878;
     }
+
     .dropZone input {
         position: absolute;
         cursor: pointer;
@@ -330,21 +394,25 @@
         height: 100%;
         opacity: 0;
     }
+
     .dropZone-upload-limit-info {
         display: flex;
         justify-content: flex-start;
         flex-direction: column;
     }
+
     .dropZone-over {
         background: #5C5C5C;
         opacity: 0.8;
     }
+
     .dropZone-uploaded {
         width: 80%;
         height: 200px;
         position: relative;
         border: 2px dashed #eee;
     }
+
     .dropZone-uploaded-info {
         display: flex;
         flex-direction: column;
@@ -356,7 +424,27 @@
         transform: translate(0, -50%);
         text-align: center;
     }
+
     .removeFile {
         width: 200px;
     }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+        
+
+
+     
