@@ -1,26 +1,53 @@
 <template>
     <div>
+        <ValidationObserver v-slot="{ handleSubmit }">
+
+        <b-form  @submit.prevent="handleSubmit(updateTemplate)" class="mt-2">
         <b-container fluid class="mt-4">
             <b-card>
             <b-row >
-                   
                      <b-col>
-                       <b-form-group>
-                           <b-form-select  @change="onChangeCategory()" v-model="selectedCategory" :options="TemplateCategory" placeholder="Filter By Category"></b-form-select>
+                       <b-form-group 
+                       >
+                            <label style="float:left !important" for="template-category"
+                            v-b-popover.hover="' Select Template Category'" title="Select Category"
+                            ><b>Select Category*</b></label>
+                           <b-form-select 
+                           
+                            @change="onChangeCategory()" v-model="selectedCategory" :options="TemplateCategory" placeholder="Filter By Category"></b-form-select>
                        </b-form-group>
                      </b-col>
-
                     <b-col>
                        <b-form-group  >
+                            <label style="float:left !important" for="feedback-user"
+                            v-b-popover.hover="' Select Template'" title="Select Template"
+                            ><b>Select Template*</b></label>
                            <b-form-select  @change="onChangeTemplate()" v-model="selectedTemplates" :options="Templates"  placeholder="Select Template"></b-form-select>
                        </b-form-group>
                     </b-col>
-
             </b-row>
-                   </b-card>
+            <b-alert
+                        :show="dismissCountDown"
+                        dismissible
+                        variant="success"
+                        @dismissed="dismissCountDown=0"
+                        @dismiss-count-down="countDownChanged"
+                        class="elementToFadeInAndOut alert-custom-position mt-2"
+                        v-if="isTemplateUpdate"
+                    >
+                    <p variant="success" class="text-float"
+                    > <i class="fa fa-smile" /> Template Updated successfully
+                    </p>
+                    <b-progress
+                            variant="warning"
+                            :max="dismissSecs"
+                            :value="dismissCountDown"
+                            height="4px"
+                    ></b-progress>
+                    </b-alert>
+                </b-card>
 
-
-            <b-row  v-if="togetEditor">
+             <b-row  v-if="toggleEditor" class="mt-2">
                 <b-col>
                     <b-card class="bg-light ar-ckeditor">
                         <input type="hidden" name="id" id="templateId" v-model="templateId">
@@ -28,7 +55,7 @@
                                 api-key="no-api-key"
                                  readonly =true
                                 :init="{
-                                            height: 1000,
+                                            height: 650,
                                             menubar: false,
                                             paste_data_images: true,
                                             plugins: [
@@ -45,6 +72,8 @@
                         <br>
                         <b-row>
                             <b-col>
+          <ValidationProvider name="Category" rules="required" v-slot="{ errors }">
+
                                 <b-form-group >
                                     <v-select class="style-chooser"
                                               v-model="TemplateSelectedCategory"
@@ -57,35 +86,40 @@
                                               :create-option="option => ({value: option.toLowerCase(), label: option})"
                                     >
                                     </v-select>
-
-
+                                          <span class="text-float">{{ errors[0] }}</span>
                                 </b-form-group>
+          </ValidationProvider>
                             </b-col>
                             <b-col>
-                                <b-form-group id="input-group-2" label-for="input-1">
-                                    <div class="input-container">
-                                        <b-form-input
-                                                class="input-field"
-                                                id="input-1"
-                                                v-model.lazy="templateTitle"
-                                                type="text"
-                                                placeholder="Enter Template title"
-                                        ></b-form-input>
-                                    </div>
-                                </b-form-group>
+            <ValidationProvider name="Title" rules="required" v-slot="{ errors }">
+                    <b-form-group id="input-group-2" label-for="input-1">
+                        <div class="input-container">
+                            <b-form-input
+                                    class="input-field"
+                                    id="input-1"
+                                    v-model.lazy="templateTitle"
+                                    type="text"
+                                    placeholder="Enter Template title"
+                            ></b-form-input>
+                        </div>
+                                          <span class="text-float">{{ errors[0] }}</span>
+
+                    </b-form-group>
+            </ValidationProvider>
                             </b-col>
                         </b-row>
+                        
                         <b-form-group  label-for="submit-template">
-                            <b-button class="ripple" type="button" @click="submitTemplate()" variant="primary">
+                            <b-button class="ripple" type="submit"  variant="primary">
                                 Update
                             </b-button>
                         </b-form-group>
-
                     </b-card>
                 </b-col>
-               
-            </b-row>
+             </b-row>
         </b-container>
+        </b-form>
+        </ValidationObserver>
     </div>
 </template>
 
@@ -116,8 +150,11 @@
 
 
 
-                togetEditor:false,
-
+                toggleEditor:false,
+                dismissSecs: 3,
+                dismissCountDown: 0,
+                showDismissibleAlert: false,
+                isTemplateUpdate: false
             }
         },
         mounted() {
@@ -142,7 +179,12 @@
                     console.log( 'error',error);
                 });
             },
-
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown
+            },
+            showAlert() {
+                this.dismissCountDown = this.dismissSecs
+            },
             fetchTemplates($category_id){
                 this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template',{
                     'category_id':$category_id,
@@ -158,7 +200,6 @@
             },
 
             fetchTemplateData($templateId){
-
                 this.axios.post('http://localhost:8080/lcrm-api/mtk-single-get-template',{
                     'id':$templateId,
                 }).then((response)=>{
@@ -183,8 +224,6 @@
                     console.log( 'error',error);
                 });
             },
-
-
             onChangeCategory(){
 
                 this.fetchTemplates(this.selectedCategory)
@@ -192,45 +231,46 @@
             },
 
             onChangeTemplate(){
-                this.togetEditor=true;
+                this.toggleEditor=true;
                 this.fetchTemplateData(this.selectedTemplates)
             },
 
             removeSelectedFile() {
-                this.htmlediotr=null;
+                this.htmlediotr='';
                 this.templateTitle=null;
                 this.categories=null;
                 this.templateId=null;
                 this.TemplateSelectedCategory=[];
+                this.toggleEditor = false
             },
-
-            submitTemplate(){
-
+            updateTemplate(){
                 if (this.TemplateSelectedCategory.length>0){
                     var category_name = [];
                     for(var i=0; i<this.TemplateSelectedCategory.length; i++){
                         category_name[i]=this.TemplateSelectedCategory[i].label
                     }
                     this.categories=category_name;
-
-                }
-
-                axios.post('http://localhost:8080/lcrm-api/mtk-update-sms-template', {
+                         axios.post('http://localhost:8080/lcrm-api/mtk-update-sms-template', {
                     id: this.templateId,
                     template: this.htmlediotr,
                     title: this.templateTitle,
                     category_name: this.categories,
-
-                })
-                    .then((response) =>  {
+                }).then((response) =>  {
                         this.removeSelectedFile()
                         console.log(response);
-                        alert(response.data.response_message)
+                        // alert(response.data.response_message)
+                        this.dismissCountDown = this.dismissSecs
+                        this.isTemplateUpdate=true
                     })
                     .catch( (error) => {
                         console.log(error);
                     });
-            },
+                 }
+                 else{
+                    this.isTemplateUpdate=false
+                }
+            }
+           
 
 
         }
@@ -424,7 +464,11 @@
         transform: translate(0, -50%);
         text-align: center;
     }
-
+ .alert-custom-position{
+        position: fixed;
+        bottom: 0px;
+        right: 12px;
+    }
     .removeFile {
         width: 200px;
     }

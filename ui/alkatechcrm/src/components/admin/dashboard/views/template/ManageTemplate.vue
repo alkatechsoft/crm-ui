@@ -1,22 +1,36 @@
 <template>
    <b-container fluid class="mt-4">
     <!-- User Interface controls -->
-    <b-row>
-        <b-col>
-            <b-card>
-            <b-button class= "" :to="'/email-temp/new'" variant="primary" style="    margin-right: -15px;">  <i class="fa fa-plus mr-2" aria-hidden="true" />  &nbsp; Add New Template </b-button>
+    <b-row  >
+        <b-col lg="6" md="6" sm="6" xm="12">
+           
+             <b-card>
+                <div>
+                    <div class="dropZone dropZone-over" >
+                        <div class="dropZone-info" >
+                            <span class="fa fa-select dropZone-title"></span>
+                                  <b-button :to="'/email-temp/new'"   > <i class="fa fa-plus mr-2" aria-hidden="true" />    &nbsp; Add New
+                                  </b-button>
+                        </div>
+                    </div>
+                </div>
             </b-card>
-
-                
-
         </b-col>
-        <b-col>
+        <b-col lg="6" md="6" sm="6" xm="12">
             <b-card>
-             <b-button class= "" :to="'/email-temp/update'" variant="primary" style="    margin-right: -15px;">   Select Existing Template </b-button>
-
+                <div>
+                    <div class="dropZone dropZone-over" >
+                        <div class="dropZone-info" >
+                            <span class="fa fa-select dropZone-title"></span>
+                                  <b-button :to="'/email-temp/update'"   >  Update 
+                                  </b-button>
+                        </div>
+                    </div>
+                </div>
             </b-card>
         </b-col>
     </b-row>
+    
    </b-container>
 </template>
 
@@ -164,14 +178,11 @@ name:'manageTemplate'
         opacity: 0;
     }
     .dropZone-upload-limit-info {
-        display: flex;
+        display: block;
         justify-content: flex-start;
         flex-direction: column;
     }
-    .dropZone-over {
-        background: #5C5C5C;
-        opacity: 0.8;
-    }
+     
     .dropZone-uploaded {
         width: 80%;
         height: 200px;
@@ -179,7 +190,7 @@ name:'manageTemplate'
         border: 2px dashed #eee;
     }
     .dropZone-uploaded-info {
-        display: flex;
+        display: block;
         flex-direction: column;
         align-items: center;
         color: #A8A8A8;

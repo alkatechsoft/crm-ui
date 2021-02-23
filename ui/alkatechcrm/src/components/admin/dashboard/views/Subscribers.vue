@@ -91,6 +91,8 @@
                                         Yearly : {{year_recurrence}}
                                         template : {{templateSelected}}
                                         campaignTitle: {{campaignTitle}}
+                                        scheduleNow:{{scheduleNow}}
+
                                     </b-col>
                                 </b-row>
 
@@ -170,10 +172,10 @@
                                             @dismissed="dismissCountDown=0"
                                             @dismiss-count-down="countDownChanged"
                                             class="elementToFadeInAndOut alert-custom-position mt-2"
-                                            v-if="isMailNow"
+                                            v-if="isScheduled"
                                     >
                                         <p variant="success" class="text-float"
-                                        > <i class="fa fa-smile" /> Added To Queue successfully
+                                        > <i class="fa fa-smile" /> Scheduled successfully
                                         </p>
                                         <b-progress
                                                 variant="warning"
@@ -366,6 +368,7 @@
             return {
                 tempAssign:'mtk-register-alot-user-to-template',
                 isMailNow:false,
+                isScheduled:false,
                 isMailNowError:false,
                 campaignTitle:null,
                 campaignId:null,
@@ -402,7 +405,7 @@
                 sortDirection: 'asc',
                 filter: null,
                 filterOn: [],
-                dismissSecs: 300,
+                dismissSecs: 3,
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
                 headerBgVariant: 'primary',
@@ -489,7 +492,6 @@
                             this.isMailNow=false
 
                             this.isMailNowError=false;
-                            this.dismissCountDown = this.dismissSecs
                             this.campaignId=response.data.response_body[0].id
                             this.title=''
                             // alert('createdd');
@@ -560,7 +562,6 @@
             },
             onMailSchedule(){
                 // console.log('date......', this.dateValidate());
-
                 let scheduledData = {
                     template_lot_id  : this.campaignId,
                     execute_at_time  : this.timeFormating(),
@@ -572,9 +573,15 @@
                 console.log('scheduledData', scheduledData)
                 this.axios.post('http://localhost:8080/lcrm-api/mtk-register-schedule-template',scheduledData).then((response)=>{
                     if(response.data.response_code === 200){
-                        this.isMailNow=true
-                        console.log('groupList', response.data.response_body);
+                        this.dismissCountDown = this.dismissSecs
+                    if(this.scheduleNow === true){
                         this.isScheduled=true
+                       this.isMailNow=false
+                    } else {
+                       this.isMailNow=true
+                        this.isScheduled=false
+                    }
+                        console.log('groupList', response.data.response_body);
                     }else{
                         console.log('error...', response)
                     }
@@ -582,11 +589,6 @@
                     console.log( error);
                 });
             },
-
-
-
-
-
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
@@ -753,7 +755,6 @@
         opacity: 0;
         transition: transform 0.5s, opacity 1s;
     }
-
     .ripple:active:after {
         transform: scale(0, 0);
         opacity: 0.3;
