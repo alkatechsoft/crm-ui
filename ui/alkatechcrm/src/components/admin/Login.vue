@@ -107,7 +107,7 @@ export default {
       this.isLoading = true;
       setTimeout(() => ((this.isLoading = false), (this.isAuth = true)), 1000);
       this.axios
-        .post("http://localhost:8080/lcrm-api/login", this.form)
+        .post("http://crmback.projectdemotest.com/lcrm-api/login", this.form)
         .then((response) => {
           if (
             response.data.response_code === 200 &&

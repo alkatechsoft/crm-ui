@@ -269,7 +269,7 @@ export default {
   },
    mounted() {
       // Set the initial number of items
-        this.axios.post('http://localhost:8080/lcrm-api/lcrm-list-parent-category').then((response)=>{
+        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/lcrm-list-parent-category').then((response)=>{
          if(response.data.response_code === 200){
           console.log('categrylist', response.data.response_body);
           response.data.response_body.map((data) => this.category.push({ value: data.id, label: data.category_name }));
@@ -340,7 +340,7 @@ export default {
             // fileData.append("category_name", category_name1);
             this.axios
               .post(
-                "http://localhost:8080/lcrm-api/register-client-ExcelUpload",
+                "http://crmback.projectdemotest.com/lcrm-api/register-client-ExcelUpload",
                 fileData
               )
               .then((response) => {

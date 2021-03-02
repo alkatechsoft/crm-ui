@@ -1,8 +1,8 @@
 <template>
     <b-container fluid class="mt-2">
         <!-- User Interface controls -->
-
         <b-card>
+         
             <b-modal size="lg" ida="my-modal"
                      :id="infoModal.id"
                      :title="infoModal.title"
@@ -14,19 +14,17 @@
                      :body-text-variant="bodyTextVariant"
                      :footer-bg-variant="footerBgVariant"
                      :footer-text-variant="footerTextVariant"
-            >
+                  >
                 <div style="background:rgba(132, 191, 255, 0.75); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; margin-bottom:1rem" class="p-3">
-
                     <ValidationObserver v-slot="{ handleSubmit }">
-
-                        <b-form  inlijne @submit.prevent="handleSubmit(onMailSchedule)" cla ss="mt-2">
+                        <b-form  inlijne @submit.prevent="handleSubmit(onSubmit)" cla ss="mt-2">
                             <b-col lg="12">
                                 <ValidationProvider name="template" rules="required" v-slot="{ errors }">
                                     <b-form-group id="input-group-1" label-for="input-1">
                                         <b-form-select v-model="templateSelected" :options="templateFiles" @change="onTemplateAssign(tempAssign)"></b-form-select>
                                         <!-- <div class="text-float">{{ errors[0] }}</div> -->
+                                    <span class="text-float">{{ errors[0] }}</span>
                                     </b-form-group>
-                                    <div class="text-float">{{ errors[0] }}</div>
                                 </ValidationProvider>
                             </b-col>
                             <b-col lg="12">
@@ -40,11 +38,10 @@
                                                 placeholder="Enter title"
                                         ></b-form-input>
                                         <!-- <span class="text-float">{{ errors[0] }}</span> -->
+                                    <span class="text-float">{{ errors[0] }}</span>
                                     </b-form-group>
                                     <!-- <span class="text-float">{{ errors[0] }}</span> -->
-                                    <div class="text-float">{{ errors[0] }}</div>
-
-                                </ValidationProvider>
+                                    </ValidationProvider>
                             </b-col>
                             <b-col lg="">
                                 <b-form-group>
@@ -54,6 +51,8 @@
                                             variant="primary"
                                             type="submit"
                                             class="btn-block ripple"
+                                            
+                                            :disabled="busy"
                                     ><i class="fas fa-envelope-square"></i> &nbsp;&nbsp; Mail Now</b-button>
                                     <b-alert
                                             :show="dismissCountDown"
@@ -62,8 +61,8 @@
                                             @dismissed="dismissCountDown=0"
                                             @dismiss-count-down="countDownChanged"
                                             class="elementToFadeInAndOut alert-custom-position mt-2"
-                                            v-if="isMailNow"
-                                    >
+                                            v-if="isMaild"
+                                        >
                                         <p variant="success" class="text-float"
                                         > <i class="fa fa-smile" /> Added To Queue successfully
                                         </p>
@@ -85,7 +84,8 @@
                                             <b-form-checkbox v-if="scheduleNow" @change="repeatSchedule" switch size="lg">Repeat</b-form-checkbox>
                                         </b-form-group>
                                     </b-col>
-                                    <b-col>
+                                    <!-- <b-col>
+                                         selectedDays:  {{selectedDays}}
                                         Repeat : {{scheduleRepeat}}
                                         Monthly : {{month_recurrence}}
                                         Yearly : {{year_recurrence}}
@@ -93,30 +93,30 @@
                                         campaignTitle: {{campaignTitle}}
                                         scheduleNow:{{scheduleNow}}
 
-                                    </b-col>
+                                    </b-col> -->
                                 </b-row>
-
-
-
+ 
                             </b-col>
                             <b-col v-if="scheduleNow">
 
                                 <b-row v-if="scheduleRepeat">
                                     <b-col lg="6" sm="6" class="ss-label " >
+                                <!-- <ValidationProvider name="Repeat" rules="required" v-slot="{ errors }"> -->
                                         <b-form-group>
-
-                                            <input type="radio" id="cat" name="repeat1"  @change="monthly" value="on" />
+                                            <input type="radio" id="cat" name="repeat1"  @change="monthly" value="on" checked/>
                                             <label  class=" ripple" for="cat">Monthly</label>
                                             <input type="radio" id="dog"  name="repeat1" @change="weekly" value="on" />
                                             <label  class=" ripple" for="dog">Weekly</label>
                                             <input  class=" ripple" type="radio" id="pig" name="repeat1" @change="yearly" value="on" />
                                             <label   class=" ripple" for="pig">yearly</label>
+                                        <span v-if="isRepeatBy" class="text-float">please select anyone</span>
                                         </b-form-group>
+                                <!-- </ValidationProvider> -->
                                         <!-- <b-form-group class="fa-plus-align">
                                           <b-button @change="schedule" switch size="sm"><i class="fa fa-plus" /></b-button>
                                         </b-form-group> -->
                                     </b-col>
-                                </b-row>
+                                </b-row> 
                                 <b-row v-if="scheduleRepeat">
                                     <b-col v-if="isWeekly">
                                         <b-form-group>
@@ -127,37 +127,23 @@
                                                     buttons
                                                     button-variant="primary"
                                                     class="ripple"
+                                                    
                                             ></b-form-checkbox-group>
                                         </b-form-group>
                                     </b-col>
                                 </b-row>
-
-
-
-
-
                                 <hr>
-
                                 <!-- selected:{{selected}}
                                 selectedays:{{selectedDays}} -->
-                                <ValidationProvider name="Date" rules="required" v-slot="{ errors }">
                                     <b-form-group v-if="isWeeklyActive" class="mt-3">
                                         <b-form-datepicker v-model="execute_at_date" :min="min"  locale="en"></b-form-datepicker>
-                                        <span class="text-float">{{ errors[0] }}</span>
                                     </b-form-group>
-                                </ValidationProvider>
                                 <ValidationProvider name="Time" rules="required" v-slot="{ errors }">
-
                                     <b-form-group>
                                         <b-form-input v-model="Time" type="time"></b-form-input>
                                         <span class="text-float">{{ errors[0] }}</span>
                                     </b-form-group>
                                 </ValidationProvider>
-
-
-
-
-
                                 <b-form-group>
                                     <b-button
                                             id="create-campaign"
@@ -189,6 +175,62 @@
                             <b-col v-if="scheduleNow">
                                 <hr>
                             </b-col>
+ 
+                            <b-overlay
+                                :show="busy"
+                                no-wrap
+                                @shown="onShown"
+                                @hidden="onHidden"
+                            >
+                                <template #overlay>
+                                <div
+                                    v-if="processing"
+                                    class="text-center p-4 bg-primary text-light rounded"
+                                >
+                                    <b-icon icon="cloud-upload" font-scale="4"></b-icon>
+                                    <i class="fa fa-cloud-upload-alt" />
+                                    <div class="mb-3">Processing...</div>
+                                    <b-progress
+                                    min="1"
+                                    max="20"
+                                    :value="counter"
+                                    variant="success"
+                                    height="3px"
+                                    class="mx-n4 rounded-0"
+                                    ></b-progress>
+                                </div>
+                                <div
+                                    v-else
+                                    ref="dialog"
+                                    tabindex="-1"
+                                    role="dialog"
+                                    aria-modal="false"
+                                    aria-labelledby="form-confirm-label"
+                                    class="text-center p-3"
+                                >
+                                    <p>
+                                    <strong id="form-confirm-label">Are you sure?</strong>
+                                    </p>
+                                    <div class="d-flex">
+                                    <b-button
+                                        size="sm"
+                                        variant="outline-danger"
+                                        class="mr-3"
+                                        @click="onCancel"
+                                    >
+                                        Cancel
+                                    </b-button>
+                                    <b-button
+                                        size="sm"
+                                        variant="outline-success"
+                                        @click="onOK"
+                                        >OK</b-button
+                                    >
+                                    </div>
+                                </div>
+                                </template>
+                            </b-overlay>
+ 
                         </b-form>
                     </ValidationObserver>
 
@@ -322,7 +364,7 @@
                     </template>
                 </template>
             </b-table>
-            <p>
+            <!-- <p>
                 Selected Rows:<br>
                 items :: {{items.id}}<br>
                 seleted:: {{ selected }}<br>
@@ -330,7 +372,7 @@
                 {{templateSelected}}<br>
                 group title: <br>
                 {{campaignTitle}}
-            </p>
+            </p> -->
             <b-row>
                 <b-col sm="7" md="3" lg="2" class="my-1">
                     <b-pagination
@@ -368,17 +410,20 @@
             return {
                 tempAssign:'mtk-register-alot-user-to-template',
                 isMailNow:false,
+                isMaild:false,
+                isSchedule:false,
                 isScheduled:false,
                 isMailNowError:false,
                 campaignTitle:null,
                 campaignId:null,
                 scheduleNow:false,
                 scheduleRepeat: false,
+                isRepeatBy: null,
                 mailNow:true,
                 execute_at_date:null,
                 Time:null,
                 min: minDate,
-                month_recurrence: null,
+                month_recurrence: 'null',
                 year_recurrence: null,
                 isWeekly: false,
                 isWeeklyActive:true,
@@ -414,6 +459,10 @@
                 bodyTextVariant: 'dark',
                 footerBgVariant: 'primary',
                 footerTextVariant: 'dark',
+                busy: false,
+                processing: false,
+                counter: 1,
+                interval: null,
                 infoModal: {
                     id: 'info-modala',
                     title: '',
@@ -447,17 +496,17 @@
             var currentDate = new Date();
             console.log('current time',currentDate.getTime("HH:mm"));
             console.log(localStorage.getItem('token'))
-            this.axios.post('http://localhost:8080/lcrm-api/list-client').then((response)=>{
+            this.axios.post('http://crmback.projectdemotest.com/lcrm-api/list-client').then((response)=>{
                 console.log(response);
                 // this.items=response.data.response_body;
                 // console.log(this.items)
                 // this.totalRows = this.items.length
             })
-            this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template').then((responseData)=>{
+            this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-mail-template').then((responseData)=>{
                 responseData.data.response_body.map((data) => this.templateFiles.push({ value: data.id, text: data.title }));
                 console.log(responseData)
             })
-            this.axios.post('http://localhost:8080/lcrm-api/count-client-by-category').then((response)=>{
+            this.axios.post('http://crmback.projectdemotest.com/lcrm-api/count-client-by-category').then((response)=>{
                 if(response.data.response_code === 200){
                     console.log('count-client-by-category', response.data.response_body);
 
@@ -486,7 +535,7 @@
                         id:this.campaignId
                     }
                     console.log('dataaaaaaaa:::::::::', asisgnTempData)
-                    this.axios.post('http://localhost:8080/lcrm-api/' + this.tempAssign, asisgnTempData).then((response)=>{
+                    this.axios.post('http://crmback.projectdemotest.com/lcrm-api/' + this.tempAssign, asisgnTempData).then((response)=>{
                         console.log('responce : ',response.data.response_code, response.data.response_body.id)
                         if(response.data.response_code === 200){
                             this.isMailNow=false
@@ -499,6 +548,64 @@
                         }
                     })
                 }
+            },
+        clearInterval() {
+        if (this.interval) {
+          clearInterval(this.interval)
+          this.interval = null
+        }
+      },
+      onShown() {
+        // Focus the dialog prompt
+        this.$refs.dialog.focus()
+      },
+      onHidden() {
+        // In this case, we return focus to the submit button
+        // You may need to alter this based on your application requirements
+        this.$refs.submit.focus()
+      },
+      onSubmit() {
+        this.processing = false
+        this.busy = true
+      },
+    onCancel() {
+      this.busy = false;
+    },
+    onOK() {
+      this.counter = 1;
+      this.processing = true
+      this.isMaild = false 
+      this.isScheduled = false
+      // Simulate an async request
+      this.clearInterval();
+      this.interval = setInterval(() => {
+        if (this.counter < 340) {
+            console.log('counter:', this.counter)
+          this.counter = this.counter + 1;
+            if(this.counter === 10){
+            this.onMailSchedule()
+            }
+            if(this.isMaild === true || this.isScheduled === true){
+                // this.counter = 49
+                    this.clearInterval();
+                    this.busy = this.processing = false;
+
+            }
+            } else {
+                this.clearInterval();
+                this.$nextTick(() => {
+                    this.busy = this.processing = false;
+                    // if(this.isSchedule === true){
+                    // this.isMaild=false
+                    // this.isScheduled=true
+                    // } else {
+                    //    this.isMaild=true
+                    //    this.isScheduled=false
+                    // }
+
+                    });
+                }
+            }, 350);
             },
             dateFormating( date = new Date) {
                 var year = date.getFullYear()
@@ -535,9 +642,10 @@
             },
             repeatSchedule(){
                 this.scheduleRepeat = !this.scheduleRepeat
-                this.month_recurrence = null
+                this.month_recurrence = 'on'
                 this.year_recurrence = null
                 this.isWeekly = false
+                this.selectedDays = []
 
             },
             monthly(){
@@ -545,12 +653,16 @@
                 this.year_recurrence = null
                 this.isWeekly = false
                 this.isWeeklyActive = true
+                this.selectedDays = []
+
             },
-            yearly(){
+        yearly(){
                 this.year_recurrence = 'on'
                 this.month_recurrence = null
                 this.isWeekly = false
                 this.isWeeklyActive = true
+                this.selectedDays = []
+
 
             },
             weekly(){
@@ -559,7 +671,10 @@
                 // this.isWeekly = true
                 this.isWeekly = !this.isWeekly
                 this.isWeeklyActive = !this.isWeeklyActive
+                this.selectedDays.push('sun')
+
             },
+            
             onMailSchedule(){
                 // console.log('date......', this.dateValidate());
                 let scheduledData = {
@@ -571,15 +686,19 @@
                     year_recurrence : this.year_recurrence
                 }
                 console.log('scheduledData', scheduledData)
-                this.axios.post('http://localhost:8080/lcrm-api/mtk-register-schedule-template',scheduledData).then((response)=>{
+                this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-register-schedule-template',scheduledData).then((response)=>{
                     if(response.data.response_code === 200){
                         this.dismissCountDown = this.dismissSecs
                     if(this.scheduleNow === true){
-                        this.isScheduled=true
-                       this.isMailNow=false
+                        this.isSchedule=true
+                        this.isMailNow=false
+                         this.isMaild=false
+                    this.isScheduled=true
                     } else {
                        this.isMailNow=true
-                        this.isScheduled=false
+                        this.isSchedule=false
+                         this.isMaild=true
+                    this.isScheduled=false
                     }
                         console.log('groupList', response.data.response_body);
                     }else{
@@ -760,7 +879,10 @@
         opacity: 0.3;
         transition: 0s;
     }
-
+.b-overlay{
+     margin-left: 15px;
+    margin-right: 15px;
+}
 </style> 
 
  

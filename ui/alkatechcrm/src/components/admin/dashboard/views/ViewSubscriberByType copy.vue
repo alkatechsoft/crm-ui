@@ -2,6 +2,44 @@
   <b-container fluid class="mt-2">
     <!-- User Interface controls -->
     <b-card>
+    <!-- <b-row style="background:rgb(132 191 255 / 75%);; margin-bottom:1rem; box-shadow:rgb(51 10 117) 0px 0px 3px 1px; border-radius: inherit;" class="pt-1">
+   
+      <b-col  offset-lg="0"
+          offset-md="3"
+          offset-sm="3"
+          lg="3"
+          md="6"
+          sm="6"
+          offset="1"
+          cols="6">
+        <h4><b>Subscriber Type :</b>  Doctors</h4>
+      </b-col>
+        <b-col  offset-lg="7"
+          offset-md="3"
+          offset-sm="3"
+          lg="2"
+          md="6"
+          sm="6"
+          offset="1"
+          cols="6">
+        <b-button class="pt-0" :to="'/subscribers/'" variant="primary"> <i class="fa fa-arrow-left " aria-hidden="true"> &nbsp; Back</i></b-button>
+      </b-col>
+ 
+    </b-row> -->
+
+
+  <b-navbar class="s-nav-bg" toggleable="sm" type="dark" variant="i nfo" style="height:40px; background:rgb(132 191 255 / 75%);; margin-bottom:1rem; box-shadow:rgb(51 10 117) 0px 0px 3px 1px; border-radius: inherit;" >
+        <!-- <b-navbar-brand href="#">ALKATECH-CRM</b-navbar-brand> -->
+        <h6><b>Subscriber Type :</b>  Doctors</h6>
+        <!-- Right aligned nav items -->
+        <b-navbar-nav class="ml-auto">
+        <b-button class= "" :to="'/subscribers/'" variant="primary" style="    margin-right: -15px;"> <i class="fa fa-arrow-left " aria-hidden="true"> &nbsp; Back</i></b-button>
+
+        </b-navbar-nav>
+       
+    </b-navbar>
+
+
     <b-row>
       <b-col  offset-lg="" lg="2" offset-md="0" md="5" sm="4"  class="my-1">
         <b-form-group
@@ -48,18 +86,7 @@
     </b-row>
 
     <!-- Main table element -->
-     <b-form-group
-      label="Selection mode:"
-      label-for="table-select-mode-select"
-      label-cols-md="4"
-    >
-      <b-form-select
-        id="table-select-mode-select"
-        v-model="selectMode"
-        :options="modes"
-        class="mb-3"
-      ></b-form-select>
-    </b-form-group>
+    
     <b-table
       :items="items"
       :fields="fields"
@@ -77,10 +104,9 @@
       :select-mode="selectMode"
       responsive="sm"
       ref="selectableTable"
-      selectable
       @row-selected="onRowSelected"
       :tbody-transition-props="transProps"
-        id="table-transition-example"
+      id="table-transition-example"
     >
     
       <template #cell(name)="row">
@@ -93,17 +119,7 @@
        Delete
     </b-button>
   </template>
-  
-      <!-- <template #cell(actions)="row">
-         <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
-        </b-button> -->
-        <!-- <b-button size="sm" @click="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-        </b-button> 
-         
-      </template>  -->
-
+   
       <template #row-details="row">
         <b-card>
           <ul>
@@ -123,16 +139,7 @@
         </template>
       </template>
     </b-table>
-    <p>
-      <b-button size="sm" @click="selectAllRows">Select all</b-button>
-      <b-button size="sm" @click="clearSelected">Clear selected</b-button>
-      <b-button size="sm" @click="selectThirdRow">Select 3rd row</b-button>
-      <b-button size="sm" @click="unselectThirdRow">Unselect 3rd row</b-button>
-    </p>
-    <p>
-      Selected Rows:<br>
-      {{ selected }}
-    </p>
+  
      <b-row>
       <b-col sm="7" md="3" lg="2" class="my-1">
         <b-pagination
@@ -146,10 +153,7 @@
         
       </b-col>
     </b-row>
-    <!-- Info modal -->
-    <!-- <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-      <pre>{{ infoModal.content }}</pre>
-    </b-modal> -->
+   
     </b-card>
   </b-container>
 </template>
@@ -162,6 +166,11 @@ import axios from 'axios';
     data() {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token'); 
       return {
+        groupTitle:null,
+        templateFiles:[
+           { value: null, text: 'Asign Template' }
+        ],
+        templateSelected:null,
         modes: ['multi', 'single', 'range'],
          items: [],
         fields: [
@@ -172,6 +181,7 @@ import axios from 'axios';
         ],
         selectMode: 'multi',
         selected: [],
+        selectedUsersID:[],
         totalRows: 1,
         currentPage: 1,
         perPage: 5,
@@ -200,15 +210,51 @@ import axios from 'axios';
     },
     mounted() {
       // Set the initial number of items
-      console.log(localStorage.getItem('token'))
-        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/list-client').then((response)=>{
+        console.log(localStorage.getItem('token'))
+        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/list-client-by-category',
+        {category_id:this.$route.params.id}
+        ).then((response)=>{
         console.log(response);
         this.items=response.data.response_body;
         console.log(this.items)
-      this.totalRows = this.items.length
+        this.totalRows = this.items.length
         })
+        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-mail-template').then((responseData)=>{
+          responseData.data.response_body.map((data) => this.templateFiles.push({ value: data.id, text: data.title }));
+          console.log(responseData)
+        })
+   this.axios.post('http://crmback.projectdemotest.com/lcrm-api/count-client-by-category').then((response)=>{
+         if(response.data.response_code === 200){
+          console.log('count-client-by-category', response.data.response_body);
+         }else{
+           this.category.push({ value: null, label: ' 👀 No Category Found' })
+          }
+        }).catch(function (error){
+        console.log( error);
+      });
+
+
     },
     methods: {
+      onGroupCreate(){
+         console.log('groupData', this.selected)
+         this.selected.map((data) => this.selectedUsersID.push(data.id));
+         console.log('users::::', this.selectedUsersID, this.groupTitle, this.templateSelected)
+         let createGroupData = {
+           users:this.selectedUsersID,
+           title:this.groupTitle,
+           template:this.templateSelected
+         }
+         console.log('dataaaaaaaa:::::::::', createGroupData)
+         this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-register-alot-user-to-template', createGroupData).then((response)=>{
+           console.log('responce : ',response.data.response_code)
+         if(response.data.response_code === 200){
+            this.isUploaded=true
+            this.isUploadedError=false;
+            this.title=''
+         }
+         })
+      },
       info(item, index, button) {
         this.infoModal.title = `Row index: ${index}`
         this.infoModal.content = JSON.stringify(item, null, 2)
@@ -233,14 +279,6 @@ import axios from 'axios';
       clearSelected() {
         this.$refs.selectableTable.clearSelected()
       },
-      selectThirdRow() {
-        // Rows are indexed from 0, so the third row is index 2
-        this.$refs.selectableTable.selectRow(2)
-      },
-      unselectThirdRow() {
-        // Rows are indexed from 0, so the third row is index 2
-        this.$refs.selectableTable.unselectRow(2)
-      }
     }
   }
 </script>

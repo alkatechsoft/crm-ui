@@ -117,10 +117,21 @@
                 </template>
 
                 <template #cell(actions)="row">
-                    <i v-if="edit === row.item.id" class="fas fa-check" @click="onSave(row.item)" ></i>
+                    <!-- <i v-if="edit === row.item.id" class="fas fa-check" @click="onSave(row.item)" ></i>
                     <i v-if="edit !== row.item.id" class="fas fa-pencil" @click="onEdit(row.item)" ></i>
                     &nbsp; &nbsp; &nbsp; &nbsp;
-                    <i class="fas fa-trash" @click="onDelete(row.item)" ></i>
+                    <i class="fas fa-trash" @click="onDelete(row.item)" ></i> -->
+
+<b-button-group>
+    <b-button  variant="warning" size="sm">  
+    <i v-if="edit === row.item.id" class="fas fa-check" @click="onSave(row.item)" ></i>
+    <i v-if="edit !== row.item.id" class="fas fa-pencil" @click="onEdit(row.item)" ></i>
+
+    </b-button>
+<b-button  variant="danger" size="sm"> 
+    <i class="fas fa-trash"  @click="onDelete(row.item)" ></i></b-button>
+</b-button-group>
+
                 </template>
 
 
@@ -139,7 +150,7 @@
                     ></b-pagination>
 
                 </b-col>
-                {{ selectedItem }}
+                <!-- {{ selectedItem }} -->
             </b-row>
 
         </b-card>
@@ -210,7 +221,7 @@
 
             fetchClientData(){
                 // Set the initial number of items
-                this.axios.post('http://localhost:8080/lcrm-api/list-client-by-category',
+                this.axios.post('http://crmback.projectdemotest.com/lcrm-api/list-client-by-category',
                     {category_id:this.$route.params.id}
                 ).then((response)=>{
                     this.items=response.data.response_body;
@@ -222,7 +233,7 @@
 
             updateClientData(Itemdata){
                 // Update Client Data
-                this.axios.post('http://localhost:8080/lcrm-api/edit-client',Itemdata
+                this.axios.post('http://crmback.projectdemotest.com/lcrm-api/edit-client',Itemdata
                 ).then((response)=>{
                     alert(response.data.response_message)
                 }).catch(function (error){
@@ -231,7 +242,7 @@
             },
 
             deleteClientData(itemId){
-                axios.post('http://localhost:8080/lcrm-api/delete-client', {
+                axios.post('http://crmback.projectdemotest.com/lcrm-api/delete-client', {
                     id:itemId,
 
                 })
@@ -245,7 +256,7 @@
             },
 
             BulkdeleteClientData(itemId, ItemStatus){
-                axios.post('http://localhost:8080/lcrm-api/delete-client', {
+                axios.post('http://crmback.projectdemotest.com/lcrm-api/delete-client', {
                     id:itemId,
                     status:ItemStatus
                 })

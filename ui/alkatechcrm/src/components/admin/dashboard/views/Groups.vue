@@ -111,7 +111,7 @@ data(){
             month_recurrence : this.month_recurrence
           }
           console.log('scheduledData', scheduledData)
-     this.axios.post('http://localhost:8080/lcrm-api/mtk-register-schedule-template',scheduledData).then((response)=>{
+     this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-register-schedule-template',scheduledData).then((response)=>{
          if(response.data.response_code === 200){
            console.log('groupList', response.data.response_body);
          this.isScheduled=true
@@ -144,7 +144,7 @@ data(){
 },
 mounted()
 {
-  this.axios.post('http://localhost:8080/lcrm-api/mtk-list-alot-user-to-template').then((response)=>{
+  this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-alot-user-to-template').then((response)=>{
          if(response.data.response_code === 200){
           console.log('groupList', response.data.response_body);
          console.log('carttttttttttttt',response.data.response_body.id);
