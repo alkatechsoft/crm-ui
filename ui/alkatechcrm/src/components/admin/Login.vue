@@ -12,7 +12,7 @@
           offset="1"
           cols="10"
         >
-          <b-card class="bg-light">
+          <b-card v-if="false" class="bg-light">
             <img alt="ethancoder logo" src="./../../assets/alkatech.png" />
             <ValidationObserver v-slot="{ handleSubmit }">
               <b-form @submit.prevent="handleSubmit(onSubmit)" class="mt-2">
@@ -61,7 +61,7 @@
                 <b-form-group id="forgot-password" label-for="forgot-password">
                   <div class="input-container">
                     <b-nav vertical>
-                      <b-nav-item to="link1">Forget Password </b-nav-item>
+                      <b-nav-item  @click="restPassword">Forget Password </b-nav-item>
                     </b-nav>
                   </div>
                   <b-button class="ripple" type="submit" variant="primary"
@@ -72,6 +72,44 @@
               </b-form>
             </ValidationObserver>
           </b-card>
+
+ <b-card v-if="true" class="bg-light">
+  <ValidationObserver v-slot="{ handleSubmit }">
+    <b-form  @submit.prevent="handleSubmit(forgetPassword)" >
+    <p><b>Reset Password</b></p>
+      <ValidationProvider
+                  name="email"
+                  rules="required"
+                  v-slot="{ errors }"
+                >
+              <b-form-group id="input-group-1" label-for="input-1">
+                      <div class="input-container">
+                        <b-form-input
+                          class="input-field"
+                          id="forget-password"
+                          v-model="resetPassword.email"
+                          type="email"
+                          placeholder="Enter email"
+                        ></b-form-input>
+                      </div>
+                    <span class="text-float">{{ errors[0] }}</span>
+              </b-form-group> 
+      </ValidationProvider>
+				<b-button type="submit" size="sm"  class="btn btn-primary btn-block">Send password reset email</b-button>
+</b-form>
+</ValidationObserver>
+</b-card>
+
+
+
+
+
+
+
+
+
+
+
           <!-- <b-card class="mt-3" header="Form Data Result">
       <pre class="m-0">{{ form }}</pre>
     </b-card> -->
@@ -98,6 +136,9 @@ export default {
         email: "",
         password: "",
       },
+      resetPassword: {
+      email: ""
+      },
       isLoading: false,
       isAuth: false,
     };
@@ -107,7 +148,7 @@ export default {
       this.isLoading = true;
       setTimeout(() => ((this.isLoading = false), (this.isAuth = true)), 1000);
       this.axios
-        .post("http://crmback.projectdemotest.com/lcrm-api/login", this.form)
+        .post("http://localhost:8080/lcrm-api/login", this.form)
         .then((response) => {
           if (
             response.data.response_code === 200 &&
@@ -129,6 +170,14 @@ export default {
             this.$router.push("/admin");
             console.log(response.data.response_code);
           }
+        });
+    },
+    forgetPassword(){
+        this.axios
+        .post("http://localhost:8080/lcrm-api/forget-password", 
+        this.resetPassword)
+        .then((response) => {
+           console.log(response)
         });
     },
     authUpdate() {

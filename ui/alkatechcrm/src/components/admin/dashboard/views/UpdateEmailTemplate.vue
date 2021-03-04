@@ -170,7 +170,7 @@
 
             fetchCategories(){
 
-                this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-parent-category').then((response)=>{
+                this.axios.post('http://localhost:8080/lcrm-api/mtk-list-parent-category').then((response)=>{
                     if(response.data.response_code === 200){
                         response.data.response_body.map((data) => this.TemplateCategory.push( { value: data.id, text: data.category_name, label: data.category_name   }));
                     }
@@ -186,7 +186,7 @@
                 this.dismissCountDown = this.dismissSecs
             },
             fetchTemplates($category_id){
-                this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-mail-template',{
+                this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template',{
                     'category_id':$category_id,
                 }).then((response)=>{
                     if(response.data.response_code === 200){
@@ -200,7 +200,7 @@
             },
 
             fetchTemplateData($templateId){
-                this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-single-get-template',{
+                this.axios.post('http://localhost:8080/lcrm-api/mtk-single-get-template',{
                     'id':$templateId,
                 }).then((response)=>{
                     if(response.data.response_code === 200){
@@ -208,7 +208,7 @@
                         this.templateTitle=response.data.response_body[0].title
                         this.templateId=response.data.response_body[0].id
 
-                        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-category-By-StringifyArray',{
+                        this.axios.post('http://localhost:8080/lcrm-api/mtk-list-category-By-StringifyArray',{
                             'categoryString':response.data.response_body[0].categories,
                         }).then((categoryResponse)=>{
                             if(categoryResponse.data.response_code === 200){
@@ -250,7 +250,7 @@
                         category_name[i]=this.TemplateSelectedCategory[i].label
                     }
                     this.categories=category_name;
-                         axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-update-sms-template', {
+                         axios.post('http://localhost:8080/lcrm-api/mtk-update-sms-template', {
                     id: this.templateId,
                     template: this.htmlediotr,
                     title: this.templateTitle,

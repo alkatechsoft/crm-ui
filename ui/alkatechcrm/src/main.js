@@ -41,6 +41,8 @@ import Subscribersbackup from './components/admin/dashboard/views/Subscribersbac
 import UpdateEmailTemplate from './components/admin/dashboard/views/UpdateEmailTemplate'
 import UploadEmailTemplate from './components/admin/dashboard/views/UploadEmailTemplate'
 import ManageTemplate from './components/admin/dashboard/views/template/ManageTemplate'
+import Report from './components/admin/dashboard/views/report/Report'
+import Attempt from './components/admin/dashboard/views/report/Attempt'
 import Week from './components/admin/dashboard/views/Week'
 import Groups from './components/admin/dashboard/views/Groups'
 import Login from './components/admin/Login'
@@ -111,6 +113,11 @@ const routes=[
     component: ViewSubscriberByType
   },
   {
+    name:'Attempt',
+    path: '/report/:id/:title',
+    component: Attempt
+  },
+  {
     name:'Subscribersbackup',
     path:'/Subscribersbackup', 
     component:Subscribersbackup
@@ -131,6 +138,11 @@ const routes=[
     component:ManageTemplate
   },
   {
+    name:'report',
+    path:'/report', 
+    component:Report
+  },
+  {
     name:'groups',
     path:'/groups', 
     component:Groups 
@@ -143,7 +155,7 @@ const router = new VueRouter({
   routes,
   mode: 'history'
 })
-Vue.config.productionTip = false  
+Vue.config.productionTip = false
 const openRoutes=['admin'];
 console.log(router.path);
 console.log('router.path');

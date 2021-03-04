@@ -76,7 +76,7 @@ import axios from 'axios';
         console.log('fileFormateError:',this.fileFormateError)
        console.log('extension is: ', this.selectedFile.name.split('.').pop())
       }
-        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/register-client-ExcelUpload', fileData ).then((response)=>{
+        this.axios.post('http://localhost:8080/lcrm-api/register-client-ExcelUpload', fileData ).then((response)=>{
         console.log(response);
         })
       }

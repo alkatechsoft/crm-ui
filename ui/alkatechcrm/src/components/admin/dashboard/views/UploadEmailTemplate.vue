@@ -118,7 +118,7 @@
         },
         mounted() {
             // Set the initial number of Template Category
-            this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-parent-category').then((response)=>{
+            this.axios.post('http://localhost:8080/lcrm-api/mtk-list-parent-category').then((response)=>{
                 if(response.data.response_code === 200){
                     response.data.response_body.map((data) => this.TemplateCategory.push({ value: data.id, label: data.category_name }));
                 }
@@ -176,7 +176,7 @@
                     }
                     this.categories=category_name;
                 }
-                axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-register-mail-template-text', {
+                axios.post('http://localhost:8080/lcrm-api/mtk-register-mail-template-text', {
                     template: this.htmlediotr,
                     title: this.templateTitle,
                     category_name: this.categories

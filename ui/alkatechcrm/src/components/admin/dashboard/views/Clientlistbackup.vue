@@ -201,7 +201,7 @@ import axios from 'axios';
     mounted() {
       // Set the initial number of items
       console.log(localStorage.getItem('token'))
-        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/list-client').then((response)=>{
+        this.axios.post('http://localhost:8080/lcrm-api/list-client').then((response)=>{
         console.log(response);
         this.items=response.data.response_body;
         console.log(this.items)

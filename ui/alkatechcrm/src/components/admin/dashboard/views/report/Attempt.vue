@@ -2,25 +2,22 @@
     <b-container fluid class="mt-2">
         <!-- User Interface controls -->
         <b-card>
-
+        <!-- scheduler_id: {{this.$route.params.id}} -->
             <b-navbar class="s-nav-bg" toggleable="sm" type="dark" variant="i nfo" style="height:40px; background:#ebebeb; margin-bottom:1rem; box-shadow:rgba(0, 0, 0, 0.15) 0px 0.3rem .4rem !important; border-radius: inherit;" >
                 <!-- <b-navbar-brand href="#">ALKATECH-CRM</b-navbar-brand> -->
-                <h6><b>Subscriber Type :</b>  {{subscriberGroupType}}</h6>
+                <h6><b>Campaign Name :</b>  {{this.$route.params.title}}</h6>
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
-                    <b-button size="sm" class= "" :to="'/subscribers/'" variant="primary" style="margin-right: -15px;"> <i class="fa fa-arrow-left " aria-hidden="true"> &nbsp; Back</i></b-button>
+                    <b-button size="sm" class= "" :to="'/report/'" variant="primary" style="margin-right: -15px;"> <i class="fa fa-arrow-left " aria-hidden="true"> &nbsp; Back</i></b-button>
                 </b-navbar-nav>
             </b-navbar>
         <hr>
+        
             <b-row>
-                <b-col  offset-lg="0" xl="2" lg="3" offset-md="0" md="3" sm="3"  class="my-1">
+                <b-col  offset-lg="0" offset-xl="0" xl="2" lg="3" offset-md="0" offset-sm="0" md="3" sm="3"  class="my-1">
                     <b-form-group
                             label=""
                             label-for="per-page-select"
-                            label-cols-sm="1"
-                            label-cols-md="1"
-                            label-cols-lg="1"
-                            label-cols-xl="2"
                             label-align-sm="right"
                             label-size="sm"
                             class="mb-0"
@@ -39,28 +36,11 @@
                         </b-input-group>
                     </b-form-group>
                 </b-col>
-                <b-col  offset-lg="" xl="2" lg="3" offset-md="0" md="3" sm="3"  class="my-1">
-                    <b-form-group
-                            class="mb-0">
-                        <b-input-group size="sm">
-                        <b-form-select 
-                                id="per-page-select"
-                                v-model="bulkAction"
-                                :options="bulkActionOptions"
-                                size="sm"
-                        ></b-form-select>
-                           <b-input-group-append>
-                            <b-button size="sm" @click="onBulkAction">action</b-button>
-                        </b-input-group-append>
-                        </b-input-group>
-                    </b-form-group>
-                </b-col>
-                <b-col offset-lg="1" xl="6" lg="5" offset-md="0" md="6" offset-sm="0"  sm="6" class="my-1">
+              
+                <b-col offset-lg="4" offset-xl="7" xl="3" lg="5" offset-md="4" md="5" offset-sm="4"  sm="5" class="my-1">
                     <b-form-group
                             label=""
                             label-for="filter-input"
-                            label-cols-sm="2"
-                            label-cols-lg="4"
                             label-align-sm="right"
                             label-size="sm"
                             class="mb-0"
@@ -85,6 +65,7 @@
 
             <b-table
                     :items="items"
+                    head-variant="light"
                     :fields="fields"
                     :current-page="currentPage"
                     :per-page="perPage"
@@ -103,36 +84,23 @@
                     selectable
                     id="table-transition-example"
                     @row-selected="onRowSelected"
-
             >
-                <template v-slot:cell()="{ value, item, field: { key }}">
-                    <template v-if="edit === item.id && key ==='status'"><b-form-select
-                                id="per-page-select"
-                                v-model="bulkAction"
-                                :options="bulkActionOptions"
-                                size="sm"
-                        ></b-form-select></template>
-                    <template v-if="edit !== item.id">{{ value }}</template>
-                    <b-form-input v-else-if="edit === item.id && key !=='status'" v-model="item[key]" />
-                </template>
+               >
 
-                <template #cell(actions)="row">
+                <template #cell(actions) ="row" >
                     <!-- <i v-if="edit === row.item.id" class="fas fa-check" @click="onSave(row.item)" ></i>
                     <i v-if="edit !== row.item.id" class="fas fa-pencil" @click="onEdit(row.item)" ></i>
                     &nbsp; &nbsp; &nbsp; &nbsp;
                     <i class="fas fa-trash" @click="onDelete(row.item)" ></i> -->
-
-<b-button-group>
-    <b-button  variant="warning" size="sm">  
-    <i v-if="edit === row.item.id" class="fas fa-check" @click="onSave(row.item)" ></i>
-    <i v-if="edit !== row.item.id" class="fas fa-pencil" @click="onEdit(row.item)" ></i>
-
-    </b-button>
-<b-button  variant="danger" size="sm"> 
-    <i class="fas fa-trash"  @click="onDelete(row.item)" ></i></b-button>
-</b-button-group>
-
+ 
+                    <b-col>
+                     <b-button-group>
+                        <!-- <b-button size="sm" :to="'/report/'+row.item.scheduler_id+'/'+row.item.title" class="btn" variant="primary">View</b-button> -->
+                        <b-button @click="getDetaildReport(row.item.id, row.item.execute_at_date)" variant="success" size="sm"> <i class="fa fa-download" /> &nbsp;Detailed Report </b-button>
+                     </b-button-group>
+                    </b-col>
                 </template>
+            
 
 
 
@@ -169,7 +137,6 @@
                 edit: null,
                 selectedItem:[],
                 clientUpdat:[],
-                bulkActionOptions:[{value: 'active', text: "Activate"},{value: 'deactivated', text: "Deactivate"},{value: 'delete', text: "Delete"},{value: 'suspended', text: "Suspend"}],
                 bulkAction:null,
                 groupTitle:null,
                 templateFiles:[
@@ -179,10 +146,10 @@
                 modes: ['multi', 'single', 'range'],
                 items: [],
                 fields: [
-                    { key: 'username', label: 'Name', sortable: false, sortDirection: 'desc' },
-                    { key: 'email', label: 'Email', sortable: false, sortDirection: 'desc' },
-                    { key: 'contact', label: 'Contact', sortable: false, sortDirection: 'desc' },
-                    { key: 'status', label: 'Status', sortable: false, sortDirection: 'desc' },
+                    { key: 'execute_at_date', label: 'Execute At', sortable: false, sortDirection: 'desc' },
+                    { key: 'execute_at_time', label: 'Execute At Time', sortable: false, sortDirection: 'desc' },
+                    { key: 'mail_clicked', label: 'Mail Clicked'},
+                    { key: 'mail_opened', label: 'Mail Opened'},
                     { key: 'actions', label: 'Actions' }
                 ],
                 selectMode: 'multi',
@@ -201,8 +168,10 @@
                     id: 'info-modal',
                     title: '',
                     content: ''
+                }, text : 'sampleText',
+                csv: [],
+                execution_date:null
                 }
-            }
         },
         computed: {
             sortOptions() {
@@ -216,21 +185,56 @@
         },
         mounted() {
             this.fetchClientData();
+
         },
         methods: {
-
+        detailedCsvReport(){
+        let csv = '\ufeff' + 'Sender Email, Recipient Email, Mail Clicked, Mail Opened\n'
+        console.log('csv',this.csv);
+        this.csv.forEach(el => {
+            var line = el['senderEmail'] + ',' + el['recipientEmail']  + ',' + el['mailClicked']  + ',' + el['mailOpened'] + '\n'
+            csv += line
+        })
+        var blob = new Blob([ csv ], { "type" : "csv/plain" });
+        let link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        let date = new Date();
+        console.log(date)
+        // link.download = 'reportCsv.csv'
+        link.download = this.$route.params.title + '-' +this.execution_date + '-report.csv'
+        link.click()
+        },
+        getDetaildReport(id, date){
+        this.axios.post('http://192.168.1.14:80/lcrm-api/mtk-report-list-all-tracker-based-helper',
+        { helper_id: id }
+        ).then((response)=>{
+            this.csv=[];
+            this.execution_date = date
+                    // this.items=response.data.response_body;
+                    response.data.response_body.map((data) => this.csv.push({senderEmail: data.sender_email, recipientEmail: data.recipient_email, mailClicked: data.mail_clicked, mailOpened:data.mail_opened }));
+                    this.totalRows = this.items.length
+                    this.detailedCsvReport();
+                    console.log('response on click',response);
+                     console.log('csv-in-response',this.csv);
+                }).catch(function (error){
+                    console.log( error);
+                });
+            },
             fetchClientData(){
-                // Set the initial number of items
-                this.axios.post('http://localhost:8080/lcrm-api/list-client-by-category',
-                    {category_id:this.$route.params.id}
-                ).then((response)=>{
-                    this.items=response.data.response_body;
+                // Set the initial number of items        
+                let scheduleId = {scheduler_id:this.$route.params.id}
+                this.axios.post('http://192.168.1.14:80/lcrm-api/mtk-report-list-all-helper-based-scheduler',scheduleId).then((response)=>{
+                    // this.items=response.data.response_body;
+                    response.data.response_body.map((data) => this.items.push({execute_at_date: this.dateFormate(data.created_at), execute_at_time: data.execute_at_time, mail_clicked: data.mail_clicked, mail_opened:data.mail_opened, id:data.id, actions:''}));
                     this.totalRows = this.items.length
                 }).catch(function (error){
                     console.log( error);
                 });
             },
-
+             dateFormate(dateSrting) {
+                var date= dateSrting.split('T')
+                return date[0]
+              },
             updateClientData(Itemdata){
                 // Update Client Data
                 this.axios.post('http://localhost:8080/lcrm-api/edit-client',Itemdata
@@ -266,7 +270,6 @@
             },
 
             onEdit(item) {
-
                 this.edit = this.edit !== item.id ? item.id : null;
             },
             onSave(item){
@@ -287,7 +290,6 @@
                 if(confirm("Do you really want to delete?")){
                     this.deleteClientData(item.id)
                 }
-
             },
 
             onFiltered(filteredItems) {
@@ -297,20 +299,8 @@
             },
             onRowSelected(items) {
                 this.selectedItem=items
-            },
-            onBulkAction(){
-                if ( this.selectedItem !== null && this.bulkAction !== null ){
-                    var ItemStatus=null;
-                    if (this.bulkAction !=='delete'){
-                         ItemStatus=this.bulkAction;
-                    }
-                    this.selectedItem.map((data) =>
-                        this.BulkdeleteClientData(data.id, ItemStatus)
-                    );
-                    alert('Bulk Action Successful')
-                    this.fetchClientData();
-                }
             }
+          
         }
     }
 </script>

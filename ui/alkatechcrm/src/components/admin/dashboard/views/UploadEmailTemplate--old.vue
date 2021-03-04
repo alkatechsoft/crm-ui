@@ -120,7 +120,7 @@ import axios from 'axios';
     },
       mounted() {
       // Set the initial number of items
-        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-parent-category').then((response)=>{
+        this.axios.post('http://localhost:8080/lcrm-api/mtk-list-parent-category').then((response)=>{
          if(response.data.response_code === 200){
           console.log('categrylist', response.data.response_body);
           response.data.response_body.map((data) => this.category.push({ value: data.id, text: data.category_name }));
@@ -170,7 +170,7 @@ import axios from 'axios';
         formData.append("title", this.title);
         formData.append("categories", this.selected);
         console.log('mmmmm',formData, this.selected)
-        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-register-mail-template-file', formData).then((response)=>{
+        this.axios.post('http://localhost:8080/lcrm-api/mtk-register-mail-template-file', formData).then((response)=>{
            console.log('responce : ',response.data.response_code)
          if(response.data.response_code === 200){
             this.isUploaded=true

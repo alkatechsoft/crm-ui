@@ -211,7 +211,7 @@ import axios from 'axios';
     mounted() {
       // Set the initial number of items
         console.log(localStorage.getItem('token'))
-        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/list-client-by-category',
+        this.axios.post('http://localhost:8080/lcrm-api/list-client-by-category',
         {category_id:this.$route.params.id}
         ).then((response)=>{
         console.log(response);
@@ -219,11 +219,11 @@ import axios from 'axios';
         console.log(this.items)
         this.totalRows = this.items.length
         })
-        this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-list-mail-template').then((responseData)=>{
+        this.axios.post('http://localhost:8080/lcrm-api/mtk-list-mail-template').then((responseData)=>{
           responseData.data.response_body.map((data) => this.templateFiles.push({ value: data.id, text: data.title }));
           console.log(responseData)
         })
-   this.axios.post('http://crmback.projectdemotest.com/lcrm-api/count-client-by-category').then((response)=>{
+   this.axios.post('http://localhost:8080/lcrm-api/count-client-by-category').then((response)=>{
          if(response.data.response_code === 200){
           console.log('count-client-by-category', response.data.response_body);
          }else{
@@ -246,7 +246,7 @@ import axios from 'axios';
            template:this.templateSelected
          }
          console.log('dataaaaaaaa:::::::::', createGroupData)
-         this.axios.post('http://crmback.projectdemotest.com/lcrm-api/mtk-register-alot-user-to-template', createGroupData).then((response)=>{
+         this.axios.post('http://localhost:8080/lcrm-api/mtk-register-alot-user-to-template', createGroupData).then((response)=>{
            console.log('responce : ',response.data.response_code)
          if(response.data.response_code === 200){
             this.isUploaded=true
