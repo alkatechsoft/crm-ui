@@ -298,7 +298,7 @@
                     small
                     @filtered="onFiltered"
                     :select-mode="selectMode"
-                    selectable
+                    selectablee
                     responsive="sm"
                     ref="selectableTable"
                     @row-selected="onRowSelected"
@@ -372,9 +372,9 @@
                 {{templateSelected}}<br>
                 group title: <br>
                 {{campaignTitle}}
-            </p> -->
+            </p> 
               Selected Rows:<br>
-            {{selected}}
+            {{selected}}-->
             <b-row>
                 <b-col sm="7" md="3" lg="2" class="my-1">
                     <b-pagination

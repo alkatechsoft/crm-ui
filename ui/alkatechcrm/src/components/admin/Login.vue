@@ -1,6 +1,8 @@
 <template>
   <div>
     <b-container fluid>
+          showUpdatePassword: {{ showUpdatePassword }}
+    isOtpSend: {{ isOtpSend }}
       <b-row>
         <b-col
           offset-lg="4"
@@ -12,7 +14,7 @@
           offset="1"
           cols="10"
         >
-          <b-card v-if="false" class="bg-light">
+          <b-card v-if="isForgetpwd" class="bg-light">
             <img alt="ethancoder logo" src="./../../assets/alkatech.png" />
             <ValidationObserver v-slot="{ handleSubmit }">
               <b-form @submit.prevent="handleSubmit(onSubmit)" class="mt-2">
@@ -61,7 +63,7 @@
                 <b-form-group id="forgot-password" label-for="forgot-password">
                   <div class="input-container">
                     <b-nav vertical>
-                      <b-nav-item  @click="restPassword">Forget Password </b-nav-item>
+                      <b-nav-item  @click="forgetPassword">Forget Password </b-nav-item>
                     </b-nav>
                   </div>
                   <b-button class="ripple" type="submit" variant="primary"
@@ -73,13 +75,13 @@
             </ValidationObserver>
           </b-card>
 
- <b-card v-if="true" class="bg-light">
+<b-card v-if="isOtpSend" class="bg-light">
   <ValidationObserver v-slot="{ handleSubmit }">
-    <b-form  @submit.prevent="handleSubmit(forgetPassword)" >
-    <p><b>Reset Password</b></p>
+    <b-form  @submit.prevent="handleSubmit(sendOtp)" >
+    <p><b>Enter your email address and we will send OTP to reset your password.</b></p>
       <ValidationProvider
                   name="email"
-                  rules="required"
+                  rules="required|email"
                   v-slot="{ errors }"
                 >
               <b-form-group id="input-group-1" label-for="input-1">
@@ -88,14 +90,18 @@
                           class="input-field"
                           id="forget-password"
                           v-model="resetPassword.email"
+                          @input="validatee"
                           type="email"
                           placeholder="Enter email"
                         ></b-form-input>
                       </div>
                     <span class="text-float">{{ errors[0] }}</span>
+                    <span class="text-float" v-if="isInValidEmail"> Invalid Email Address try again </span>
               </b-form-group> 
       </ValidationProvider>
-				<b-button type="submit" size="sm"  class="btn btn-primary btn-block">Send password reset email</b-button>
+				<b-button type="submit" size="sm"  class="btn btn-primary btn-block" v-bind:class="{ activeOpacity: isLoading }">Send Otp to Email
+                    <b-spinner class="ml-2" v-if="isLoading" small></b-spinner>
+        </b-button>
 </b-form>
 </ValidationObserver>
 </b-card>
@@ -109,25 +115,30 @@
 
 
 
-
           <!-- <b-card class="mt-3" header="Form Data Result">
       <pre class="m-0">{{ form }}</pre>
     </b-card> -->
+
         </b-col>
       </b-row>
     </b-container>
+    <update-password :email="this.form.email" v-if="showUpdatePassword"/>
+  
   </div>
+  
 </template>
 
 <script>
 // import Vue from 'vue'
 
 import axios from "axios";
+import updatePassword from "./updatePassword";
 
 axios.defaults.withCredentials = true;
 
 export default {
   name: "Login",
+  
   data() {
     axios.defaults.headers.common['Authorization'] =''; 
 
@@ -141,7 +152,14 @@ export default {
       },
       isLoading: false,
       isAuth: false,
-    };
+      isForgetpwd: true,
+      isOtpSend: false,
+      isInValidEmail:false,
+      showUpdatePassword:false
+    }
+  },
+  components:{
+  updatePassword
   },
   methods: {
     onSubmit() {
@@ -172,11 +190,29 @@ export default {
           }
         });
     },
+    validatee(){
+   this.isInValidEmail = false
+    },
     forgetPassword(){
+    this.isForgetpwd = false
+    this.isOtpSend = true
+    },
+    sendOtp(){
+        this.isLoading = true;
         this.axios
         .post("http://localhost:8080/lcrm-api/forget-password", 
         this.resetPassword)
         .then((response) => {
+              this.isLoading = false
+           if (response.data.response_code === 200){
+              this.isInValidEmail = false
+              this.isOtpSend = false
+              this.showUpdatePassword =true
+            }else{
+              this.isInValidEmail = true
+              this.isOtpSend = true
+
+            }
            console.log(response)
         });
     },
@@ -238,7 +274,9 @@ export default {
   opacity: 0;
   transition: transform 0.5s, opacity 1s;
 }
-
+.activeOpacity{
+opacity: .5;
+}
 .ripple:active:after {
   transform: scale(0, 0);
   opacity: 0.3;
