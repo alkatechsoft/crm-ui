@@ -211,9 +211,8 @@
  
             this.axios.post('http://192.168.1.14/lcrm-api/mtk-report-list-all-scheduler').then((response)=>{
                 if(response.data.response_code === 200){
-
                     response.data.response_body.map((data) => this.items.push({title: data.title, attempts: data.attempts, scheduler_id:data.id, actions:''}));
-        // this.items=response.data.response_body;
+                    // this.items=response.data.response_body;
                   
                   console.log("itemssssssssss",this.items)
                     this.totalRows = this.items.length

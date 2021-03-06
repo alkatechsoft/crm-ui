@@ -1,0 +1,71 @@
+
+.card {
+    border: 0px solid rgba(0, 0, 0, 0.125);
+    top: 30%;
+  }
+  .card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.5rem;
+    background: white;
+    box-shadow: 0px 2px 10px 0px #888;
+    border-radius: inherit;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  /*Create ripple effec*/
+  .ripple {
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+  }
+  
+  .ripple:after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(10, 10);
+    opacity: 0;
+    transition: transform 0.5s, opacity 1s;
+  }
+  
+  .ripple:active:after {
+    transform: scale(0, 0);
+    opacity: 0.3;
+    transition: 0s;
+  }
+  
+  /* btn styles */
+ 
+  .icon {
+    border-radius: 0.25rem 0rem 0rem 0.25rem;
+    padding: 10px;
+    background: #ff357e;
+    color: white;
+    min-width: 14%;
+    text-align: center;
+  }
+  .input-container {
+    text-align: left;
+    display: flex;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    outline: none;
+    border-radius: 0rem 0.25rem 0.25rem 0rem;
+  }
+  .activeOpacity{
+  opacity: .5;
+  }
+  

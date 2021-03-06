@@ -75,7 +75,13 @@ Vue.prototype.$localStorage = new Vue({
 
 
 
-
+Vue.mixin({
+  methods: {
+    globalHelper: function (aa, bb) {
+      alert(aa+bb)
+    },
+  },
+})
 
 
 
